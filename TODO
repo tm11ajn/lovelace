@@ -1,0 +1,5 @@
+1. fixa gitrepo
+2. fatta hur jag ska veta vilken operation som ska användas
+3. konstruera en edgelist (genom rekursivt anrop?)
+4. validera inkommande träd (kolla antalet höger/vänster-paranteser.
+

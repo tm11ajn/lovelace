@@ -1,0 +1,9 @@
+wihu
+12343
+OPERATION: kaki
+    nodes:
+        A PORT 1 DOCK 2
+        B DOCK 1
+        C
+    edges:
+        A -> B arg0
