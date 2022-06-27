@@ -3,3 +3,13 @@
 3. konstruera en edgelist (genom rekursivt anrop?)
 4. validera inkommande träd (kolla antalet höger/vänster-paranteser.
 
+Algo maybe???
+
+Basfall = Strängen är tom?
+rekursionen bör returnera portar.
+
+När en port returneras ska den connecta med en lämplig dock
+
+slå ihop två grafer och returnera portarna i rekursionen tills hela träd-strängen är analyserad och de resulterande
+kanterna är sparade i en lista av kanter
+

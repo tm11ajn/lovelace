@@ -20,7 +20,6 @@ public class OperationParser {
         try{
             ParseOperations();
             for (Operation operation: opList) {
-                //operation.validateEdges();
                 testPrintOperation(operation);
             }
 
@@ -178,5 +177,9 @@ public class OperationParser {
         System.err.println("The edge \"" + line.trim() + "\" at row " + currentRow + " is not a valid edge");
         System.exit(1);
 
+    }
+
+    public ArrayList<Operation> getOpList() {
+        return opList;
     }
 }
