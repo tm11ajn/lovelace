@@ -13,3 +13,6 @@ När en port returneras ska den connecta med en lämplig dock
 slå ihop två grafer och returnera portarna i rekursionen tills hela träd-strängen är analyserad och de resulterande
 kanterna är sparade i en lista av kanter
 
+Generera grafer inom specifikt intervall.
+generera grafer med ett/flera specifika keywords.
+
