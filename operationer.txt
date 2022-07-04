@@ -1,166 +1,147 @@
 
-OPERATION: s
+OPERATION: sx
 	nodes:
-	x DOCK 1
+	x PORT 1
 	edges:
 
-OPERATION: s'
+OPERATION: s'x
 	nodes:
-	x DOCK 1
+	x PORT 1
 
-OPERATION: u
-	1 union 1
-	
-OPERATION: u'
-	1 union 2
 
 OPERATION: zs1
 	nodes:
 	z PORT 1
-	s' DOCK 1
+	z DOCK 1 arg0
 
 	edges:
-	z -> s' arg0
-	z -> s' arg1
 
 OPERATION: zs2
 	nodes:
 	z PORT 1
-	s' DOCK 1
+	z DOCK 1 arg0
 	y
 	
 	edges:
-	z -> s' arg0
 	z -> y arg1
 
 OPERATION: zs3
 	nodes:
 	z PORT 1
 	x
-	s DOCK 1
+	z DOCK 1 arg1
 	
 	edges:
 	z -> x arg0
-	z -> s arg1
 
 OPERATION: zs4
 	nodes:
 	z PORT 1
-	c1 DOCK 1
-	c2 DOCK 2
+	z DOCK 1 arg0
+	z DOCK 2 arg1
 	
 	edges:
-	z -> c1 arg0
-	z -> c2 arg1
 
 OPERATION: trys
 	nodes:
 	try PORT 1
-	c1 DOCK 1
-	c2 DOCK 2
+	try DOCK 1 arg0
+	try DOCK 2 arg1
 
 	edges:
-	try -> c1 arg0
-	try -> c2 arg1
 
 OPERATION: persuades
 
 	nodes:
 	persuade PORT 1
 	x
-	c1 DOCK 1
-	c2 DOCK 2
+	presuade DOCK 1 arg1
+	presuade DOCK 2 arg2
 
 	edges:
 	persuade -> x arg0
-	persuade -> c1 arg1
-	persuade -> c2 arg2
 
 OPERATION: persuadess
 
 	nodes:
 	persuade PORT 1
-	u'1 DOCK 1
-	u'2 DOCK 2
-	u'3 DOCK 3
+	persuade DOCK 1 arg0
+	persuade DOCK 2 arg1
+	persuade DOCK 3 arg2
 
 	edges:
-	persuade -> u'1 arg0
-	persuade -> u'2 arg1
-	persuade -> u'3 arg2
 
 OPERATION: zc1
 	nodes:
 	z PORT 2
-	s' PORT 1 DOCK 1
+	z DOCK 1 arg0
+	undef PORT 1
 
 	edges:
-	z -> s' arg0
-	z -> s' arg1
 
 OPERATION: zc2
 	nodes:
 	z PORT 2
-	s' PORT 1 DOCK 1
+	z DOCK 1 arg0
+	undef PORT 1
 	y
 
 	edges:
-	z -> s' arg0
 	z -> y arg1
 
 OPERATION: zc3
 	nodes:
 	z PORT 2
 	x PORT 1
-	s DOCK 1
+	z DOCK 1 arg1
 	edges:
 	z -> x arg0
-	z -> s arg1
 
 OPERATION: zc4
 	nodes:
 	z PORT 2
-	u1 PORT 1 DOCK 1
-	u2 DOCK 2	
-	
-	
+	undef PORT 1
+	z DOCK 1 arg0
+	z DOCK 2 arg1
+
 	edges:
-	z -> u1 arg0
-	z -> u2 arg1
 
 OPERATION: tryc
 	nodes:
 	try PORT 2
-	c1 DOCK 1 PORT 1
-	c2 DOCK 2
+	undef PORT 1
+	try DOCK 1 arg0
+	try DOCK 2 arg1
 
 	edges:
-	try -> c1 arg0
-	try -> c2 arg1
 
 OPERATION: persuadec
 	nodes:
 	persuade PORT 2
 	x PORT 1
-	c1 DOCK 1
-	c2 DOCK 2
+	persuade DOCK 1 arg1
+	persuade DOCK 2 arg2
 
 	edges:
 	persuade -> x arg0
-	persuade -> c1 arg1
-	persuade -> c2 arg2
-
 
 
 OPERATION: persuadecc
 	nodes:
 	persuade PORT 2
-	u1 DOCK 1 PORT 1
-	u2 DOCK 2
-	u3 DOCK 3
+	undef PORT 1
+	persuade DOCK 1 arg0
+	persuade DOCK 2 arg1
+	persuade DOCK 3 arg2
 
 	edges:
-	persuade -> u1 arg0
-	persuade -> u2 arg1
-	persuade -> u3 arg2
+
+OPERATION: u
+	1 union 1
+
+OPERATION: u'
+	1 union 2
+
+
+
 
