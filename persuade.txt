@@ -1,0 +1,22 @@
+s
+s -> sx 
+s -> zs1(s') 
+s -> zs2(s') 
+s -> zs3(s) 
+s -> zs4(u) 
+s -> trys(c) 
+s -> persuades(c)
+s -> persuadess(u')
+
+c -> zc1(s')
+c -> zc2(s')
+c -> zc3(s)
+c -> zc4(u)
+c -> tryc(c) #
+c -> persuadec(c)
+c -> persuadecc(u')
+
+u' -> u'(s' c)
+u -> u(s' s)
+
+s' -> s'x
