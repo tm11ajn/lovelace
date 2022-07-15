@@ -15,4 +15,34 @@ kanterna är sparade i en lista av kanter
 
 Generera grafer inom specifikt intervall.
 generera grafer med ett/flera specifika keywords.
+specifisera hur många core-referenser.
 
+från konkreta verb från klass.
+
+definiera ordklass och sedan specifisera ordet.
+
+on to notes??? wordnet??
+
+Maila mark.
+
+fil med massa träd.
+
+
+utöka egen node
+implementera bettyfiler anpassat till min kod.
+
+they he she
+
+
+OPERATION: z1
+
+DOCKS: 2
+PORT 1
+
+edges:
+    A -> B arg0
+
+
+GÖR OM ARGUMENTEN SÅ ATT DET LIGGER BAKOM DOCK ISTÄLLET FÖR EDGES.
+
+OM PORT ÄR UNDEF MÅSTE DEN HA EN DOCK MED SAMMA NUMMER??

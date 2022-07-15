@@ -68,8 +68,6 @@ public class TreeParser {
                                 parStack.size() == 1)) {
                             TreeNode tempTree = buildTree(currentString, 0);
 
-                            //tempTree.setDepth(parStack.size());
-
                             children.addLast(tempTree);
                             currentString = "";
                         } else {

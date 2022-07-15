@@ -83,40 +83,89 @@ public class DAGGenerator {
         return null;
     }
 
-    public void GetPortFromChild(){
+    public void getPortFromChild(){
         HashMap<String, ArrayList<OpNode>> portHashMap = new HashMap<>();
-        for (TreeNode node: treeNodes) {
-            if(operationHashMap.containsKey(node.getLabel())){
-                Operation operation = operationHashMap.get(node.getLabel());
+        for (TreeNode operationNode: treeNodes) {
+            if(operationHashMap.containsKey(operationNode.getLabel())){
+                Operation operation = operationHashMap.get(operationNode.getLabel());
 
-                for (OpNode opNode: operation.getNodes()) {
+                for (OpNode opNode: operation.getPortNodeArray()) {
 
-                    if(opNode.hasPort() && node.getParent() != null){
-                        if(portHashMap.containsKey(node.getParent().getLabel())){
-                            portHashMap.get(node.getParent().getLabel()).add(opNode);
+                    if(operationNode.getParent() != null){
+                        if(portHashMap.containsKey(operationNode.getParent().getLabel())){
+                            /*
+                            if(opNode.getNodeName().equals("undef")){
+                                System.out.println(opNode.getNodeName() + " node with parent operation: " + operationNode.getParent().getLabel());
+                            }
+
+                             */
+                            portHashMap.get(operationNode.getParent().getLabel()).add(opNode);
                         }else {
                             ArrayList<OpNode> portNodes = new ArrayList<>();
                             portNodes.add(opNode);
-                            portHashMap.put(node.getParent().getLabel(), portNodes);
+                            portHashMap.put(operationNode.getParent().getLabel(), portNodes);
                         }
-                        //String key = node.getParent().getLabel() + opNode.getNodeName();
-                        //portHashMap.put(node.getParent().getLabel(), opNode);
                     }
                 }
             }
         }
 
+        MatchDockWithPort(portHashMap);
+
+        /*
         for (TreeNode node : treeNodes) {
             if(operationHashMap.containsKey(node.getLabel()) && portHashMap.containsKey(node.getLabel())){
 
-                ArrayList<OpNode> portNodes = portHashMap.get(node.getLabel());
+                String operationName = node.getLabel();
+
+                ArrayList<OpNode> portNodes = portHashMap.get(operationName);
+
 
                 for (OpNode portNode: portNodes) {
-                    OpNode dockNode = operationHashMap.get(node.getLabel()).getDockNodes().get(portNode.getPortNum());
+                    OpNode dockNode = operationHashMap.get(operationName).getDockNodes().get(portNode.getPortNum());
 
-                    System.out.println("Node: " + node.getLabel() + " with openPort " + portNode.getNodeName() + " with argument: " + dockNode.getEdgeArgument()) ;
+                    System.out.println("Node: " + dockNode.getNodeName() + " with openPort " + portNode.getNodeName() +
+                            " with argument: " + dockNode.getEdgeArgument());
                 }
             }
         }
+
+         */
+    }
+
+    private void MatchDockWithPort(HashMap<String, ArrayList<OpNode>> portHashMap){
+        ArrayList<OpNode> parentPorts;
+        for (TreeNode node : treeNodes) {
+            if(operationHashMap.containsKey(node.getLabel()) && portHashMap.containsKey(node.getLabel())){
+
+                String operationName = node.getLabel();
+
+                ArrayList<OpNode> portNodes = portHashMap.get(operationName);
+                HashMap<Integer, OpNode> parentDockNodes = operationHashMap.get(operationName).getDockNodes();
+                HashMap<Integer, OpNode> undefPorts = operationHashMap.get(operationName).getUndefPorts();
+                //parentPorts = portHashMap.get(node.getParent().getLabel());
+
+                for (OpNode portNode: portNodes) {
+
+                    if(parentDockNodes.containsKey(portNode.getPortNum())){
+                        System.out.println("dock: " +  parentDockNodes.get(portNode.getPortNum()).getNodeName() + " matched with port: " + portNode.getNodeName());
+
+                        if(undefPorts.containsKey(portNode.getPortNum())){
+
+                            parentPorts = portHashMap.get(node.getParent().getLabel());
+                            for (OpNode parPort: parentPorts) {
+                                if(parPort.isUndef() && parPort.getPortNum() == portNode.getPortNum()){
+                                    parPort.setNodeName(portNode.getNodeName());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void setUndefPort(){
+
     }
 }

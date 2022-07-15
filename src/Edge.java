@@ -9,6 +9,12 @@ public class Edge {
         this.label = edgeinfo[3];
     }
 
+    public Edge(String toNode, String fromNode, String label){
+        this.fromNode = fromNode;
+        this.toNode = toNode;
+        this.label = label;
+    }
+
     public String getFromNode() {
         return fromNode;
     }

@@ -62,6 +62,14 @@ public class RTGParser{
 
     private WTA wta;
 
+    public RTGParser(){
+        this.semiring = null;
+        this.hasFinalState = false;
+        this.ruleCounter = 0;
+        this.forDerivations = false;
+        this.sortedInput = new HashMap<>();
+        this.stateNames = new ArrayList<>();
+    }
 
     public RTGParser(Semiring semiring) {
         this.semiring = semiring;
@@ -194,33 +202,29 @@ public class RTGParser{
         }
     }
 
+   /*
+   Original
+    */
     public void parseLine(String line)
             throws IllegalArgumentException, SymbolUsageException,
             DuplicateRuleException {
+        //Splittar på -> eller #
         String[] sides = line.split(SPLIT_REGEX);
+        //???????
         Weight weight = semiring.one();
+
+        //Om # finns så lägg till värde bakom #
         if (sides.length > 2) {
             double value = Double.parseDouble(sides[2]);
             weight = semiring.createWeight(value);
         }
+
+        //Skapar lhs och rhs
         String lhs = sides[0].trim();
         String rhs = sides[1].trim();
+
+        //Kallar på rekursionen med rhs
         Node tree = buildTree(rhs, 0);
-        State resultingState = wta.addState(lhs);
-        resultingState.getLabel().setNonterminal(true);
-        Rule newRule = new Rule(tree, weight, resultingState);
-        ArrayList<Node> leaves = tree.getLeaves();
-
-        for (Node leaf : leaves) {
-            String label = leaf.getLabel().getLabel();
-            if (sortedInput.containsKey(label)) {
-                leaf.getLabel().setNonterminal(true);
-                newRule.addState(wta.addState(label));
-            }
-        }
-
-        wta.addRule(newRule);
-        ruleCounter++;
     }
 
 
@@ -233,9 +237,6 @@ public class RTGParser{
         if (!containsParsingCharacters(rhs)) {
             String symbolString = rhs.trim();
 
-            if (forDerivations && nOfChildren > 0) {
-                symbolString += "//rule" + ruleCounter;
-            }
 
             Symbol symbol = wta.addSymbol(symbolString, nOfChildren);
             Node tree = new Node(symbol);
@@ -289,8 +290,10 @@ public class RTGParser{
             int size = children.size();
             tree = buildTree(treeString, size);
 
+            //iterera genom barnen och lägg till förälder till barnet.
             while (!children.isEmpty()) {
                 tree.addChild(children.pollFirst());
+                //child.addparent(tree)
             }
 
             return tree;

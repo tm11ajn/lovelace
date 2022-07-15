@@ -10,7 +10,7 @@ public class DockNode {
         this.argName = info[3];
     }
 
-    public String getNodeName() {
+    public String getDockName() {
         return nodeName;
     }
 

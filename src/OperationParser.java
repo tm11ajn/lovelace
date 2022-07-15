@@ -7,7 +7,6 @@ import java.util.Scanner;
 public class OperationParser {
 
     private File operations;
-    //private ArrayList<Operation> opList = new ArrayList<>();
     private HashMap<String, Operation> operationHashMap = new HashMap<>();
 
     private static final int OPERATION = 1;
@@ -21,7 +20,7 @@ public class OperationParser {
 
         try{
             ParseOperations();
-
+            System.out.println("@@@@@@@PRINTING OPERATIONS");
             for (Entry<String, Operation> operation: operationHashMap.entrySet()) {
                 testPrintOperation(operation.getValue());
             }
@@ -45,7 +44,6 @@ public class OperationParser {
             currentRow++;
 
             String line = scanner.nextLine();
-            //line = line.replace("\t", "");
 
             if(line.length() == 0) continue;
 
@@ -119,7 +117,7 @@ public class OperationParser {
 
             if(!(edgeInfo.length == 4 && edgeInfo[1].equals("->"))){
                 faultyEdgeFormat(line);
-            }else if((nonexNode = validateNodesInEdge(edgeInfo[0], edgeInfo[2], operation)) != null){
+            }else if((nonexNode = validateNodesInEdge(edgeInfo[0], operation)) != null){
                 referringToNonexistentNode(line, nonexNode);
             }else{
                 operation.addEdge(new Edge(edgeInfo));
@@ -142,32 +140,15 @@ public class OperationParser {
         return operation;
     }
 
-    private String validateNodesInEdge(String fromNode, String targetNode, Operation operation){
-        boolean validFromNode = false;
-        boolean validTargetNode = false;
+    private String validateNodesInEdge(String fromNode, Operation operation){
 
         for (OpNode node: operation.getNodes()) {
-            if(validFromNode && validTargetNode){
+            if(node.getNodeName().equals(fromNode)){
                 return null;
             }
-            if(node.getNodeName().equals(fromNode)){
-                validFromNode = true;
-            }
-
-            if(node.getNodeName().equals(targetNode)){
-                validTargetNode = true;
-            }
-
         }
 
-        if(!validFromNode){
-            return fromNode;
-        }
-
-        if(!validTargetNode){
-            return targetNode;
-        }
-        return null;
+        return fromNode;
     }
 
     private void referringToNonexistentNode(String line, String nonexNode){

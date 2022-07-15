@@ -21,7 +21,7 @@ OPERATION: zs2
 	z PORT 1
 	z DOCK 1 arg0
 	y
-	
+
 	edges:
 	z -> y arg1
 
