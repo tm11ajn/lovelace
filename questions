@@ -1,1 +1,7 @@
 HUr ska jag veta vilken operation som ska appliceras på trädet utan att veta hur det konstruerades??
+
+1. Semiring, behövs det?
+    1.1 Används både i Parseline och konstruktorn till RTGParser
+    1.2 Om det används, vad fyller det för funktion?
+2. Parseline, hur hanterar jag Rules/States utan lhs?
+3. Hänger inte riktigt med på
