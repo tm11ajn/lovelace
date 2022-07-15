@@ -9,7 +9,7 @@ public class Edge {
         this.label = edgeinfo[3];
     }
 
-    public Edge(String toNode, String fromNode, String label){
+    public Edge(String fromNode, String toNode, String label){
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.label = label;

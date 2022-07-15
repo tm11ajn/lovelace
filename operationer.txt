@@ -12,7 +12,7 @@ OPERATION: s'x
 OPERATION: zs1
 	nodes:
 	z PORT 1
-	z DOCK 1 arg0
+	z DOCK 1 arg0 arg1
 
 	edges:
 
@@ -74,7 +74,7 @@ OPERATION: persuadess
 OPERATION: zc1
 	nodes:
 	z PORT 2
-	z DOCK 1 arg0
+	z DOCK 1 arg0 arg1
 	undef PORT 1
 
 	edges:

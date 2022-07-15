@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class OpNode {
     private int portNum = -1;
     private int dockNum = -1;
@@ -6,6 +8,8 @@ public class OpNode {
     private String edgeArgument = null;
     private String receiveArgument = null;
     private boolean undef = false;
+
+    private ArrayList<String> args = new ArrayList<>();
 
     public OpNode(String[] info){
         this.nodeName = info[0];
@@ -33,24 +37,23 @@ public class OpNode {
 
     private void setDockAndPort(String[] nodeInfo){
 
-        /*
-        for( int i = 0 ; i < nodeInfo.length-1 ; i++){
-            if(nodeInfo[i].contains("DOCK")){
-                dockNum = Integer.parseInt(nodeInfo[i+1]);
-                edgeArgument = nodeInfo[nodeInfo.length-1];
-
-            }
-
-            if(nodeInfo[i].contains("PORT")){
-                portNum = Integer.parseInt(nodeInfo[i+1]);
-            }
-        }
-
-         */
 
         if(nodeInfo[1].equals("DOCK")){
             dockNum = Integer.parseInt(nodeInfo[2]);
-            edgeArgument = nodeInfo[3];
+
+            if(nodeInfo.length > 4){
+                for (int i = 3 ; i < nodeInfo.length ; i++){
+                    args.add(nodeInfo[i]);
+                }
+
+            }else if(nodeInfo.length == 4){
+                edgeArgument = nodeInfo[3];
+            }
+            else {
+                System.err.println("Format of the DOCK node: " + nodeInfo[0] + " is invalid\n" +
+                        "Example of correct format: <Node name> DOCK <dock number> arg0 arg1 arg2.....");
+                System.exit(1);
+            }
         }
 
         if(nodeInfo[1].equals("PORT")){
@@ -87,5 +90,10 @@ public class OpNode {
     public boolean isUndef(){
         return undef;
     }
+
+    public ArrayList<String> getArgs() {
+        return args;
+    }
+
 }
 

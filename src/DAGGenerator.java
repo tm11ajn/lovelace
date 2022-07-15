@@ -4,9 +4,7 @@ public class DAGGenerator {
 
     private ArrayList<TreeNode> treeNodes;
     private HashMap<String, Operation> operationHashMap;
-    private Stack<TreeNode> portStack = new Stack<>();
     private ArrayList<Edge> DAGEdges = new ArrayList<>();
-    private ArrayList<OpNode> pockNodes = new ArrayList<>();
     private LinkedList<OpNode> portNodesFromPrevOperationQueue = new LinkedList<>();
 
     public DAGGenerator(ArrayList<TreeNode> treeNodes, HashMap<String, Operation> operationHashMap){
@@ -77,11 +75,7 @@ public class DAGGenerator {
         return null;
     }
 
-    private Edge createEdgesBetweenPortAndDock(String fromNode, String toNode){
 
-
-        return null;
-    }
 
     public void getPortFromChild(){
         HashMap<String, ArrayList<OpNode>> portHashMap = new HashMap<>();
@@ -93,12 +87,6 @@ public class DAGGenerator {
 
                     if(operationNode.getParent() != null){
                         if(portHashMap.containsKey(operationNode.getParent().getLabel())){
-                            /*
-                            if(opNode.getNodeName().equals("undef")){
-                                System.out.println(opNode.getNodeName() + " node with parent operation: " + operationNode.getParent().getLabel());
-                            }
-
-                             */
                             portHashMap.get(operationNode.getParent().getLabel()).add(opNode);
                         }else {
                             ArrayList<OpNode> portNodes = new ArrayList<>();
@@ -134,34 +122,78 @@ public class DAGGenerator {
     }
 
     private void MatchDockWithPort(HashMap<String, ArrayList<OpNode>> portHashMap){
-        ArrayList<OpNode> parentPorts;
+        OpNode dockNode;
+        Operation currentOperation;
+        String operationName;
+        ArrayList<OpNode> portNodes;
+        HashMap<Integer, OpNode> parentDockNodes;
+
         for (TreeNode node : treeNodes) {
             if(operationHashMap.containsKey(node.getLabel()) && portHashMap.containsKey(node.getLabel())){
 
-                String operationName = node.getLabel();
+                operationName = node.getLabel();
+                currentOperation = operationHashMap.get(operationName);
+                DAGEdges.addAll(currentOperation.getEdges());
 
-                ArrayList<OpNode> portNodes = portHashMap.get(operationName);
-                HashMap<Integer, OpNode> parentDockNodes = operationHashMap.get(operationName).getDockNodes();
+                portNodes = portHashMap.get(operationName);
+                parentDockNodes = currentOperation.getDockNodes();
 
                 for (OpNode portNode: portNodes) {
-
                     if(parentDockNodes.containsKey(portNode.getPortNum())){
-                        System.out.println("dock: " +  parentDockNodes.get(portNode.getPortNum()).getNodeName() + " matched with port: " + portNode.getNodeName());
-                        if(node.getParent() != null){
-                            parentPorts = portHashMap.get(node.getParent().getLabel());
-                            for (OpNode parPort: parentPorts) {
-                                if(parPort.isUndef() && parPort.getPortNum() == portNode.getPortNum()){
-                                    parPort.setNodeName(portNode.getNodeName());
-                                }
-                            }
-                        }
+
+                        dockNode = parentDockNodes.get(portNode.getPortNum());
+                        createNewEdges(portNode, dockNode);
+                        setUndefinedNode(node, portNode, portHashMap);
                     }
+                }
+            }
+        }
+
+        for (Edge edge: DAGEdges) {
+            System.out.println(edge.getFromNode() + " -> " + edge.getToNode() + " with arg: " + edge.getLabel());
+
+        }
+    }
+
+    private void setUndefinedNode(TreeNode node, OpNode portNode, HashMap<String, ArrayList<OpNode>> portHashMap) {
+        if(node.getParent() != null){
+            ArrayList<OpNode> parentPorts;
+            parentPorts = portHashMap.get(node.getParent().getLabel());
+            for (OpNode parPort : parentPorts) {
+                if (parPort.isUndef() && parPort.getPortNum() == portNode.getPortNum()) {
+                    parPort.setNodeName(portNode.getNodeName());
+                    break;
                 }
             }
         }
     }
 
-    private void setUndefPort(){
+    private void createNewEdges(OpNode portNode, OpNode dockNode){
 
+        if(dockNode.getEdgeArgument() == null){
+            for (String arg: dockNode.getArgs()) {
+                DAGEdges.add(new Edge(dockNode.getNodeName(), portNode.getNodeName(), arg));
+            }
+        }else{
+            DAGEdges.add(new Edge(dockNode.getNodeName(), portNode.getNodeName(), dockNode.getEdgeArgument()));
+        }
     }
+
+    /*
+    private void matchDocksWithPorts(ArrayList<OpNode> portNodes, Operation currentOperation ){
+        HashMap<Integer, OpNode> parentDockNodes = currentOperation.getDockNodes();
+        OpNode dockNode;
+        for (OpNode portNode: portNodes) {
+            if(parentDockNodes.containsKey(portNode.getPortNum())){
+
+
+
+                dockNode = parentDockNodes.get(portNode.getPortNum());
+                createNewEdges(portNode, dockNode);
+                setUndefinedNode(node, portNode, portHashMap);
+            }
+        }
+    }
+
+     */
 }
