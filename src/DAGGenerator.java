@@ -142,16 +142,12 @@ public class DAGGenerator {
 
                 ArrayList<OpNode> portNodes = portHashMap.get(operationName);
                 HashMap<Integer, OpNode> parentDockNodes = operationHashMap.get(operationName).getDockNodes();
-                HashMap<Integer, OpNode> undefPorts = operationHashMap.get(operationName).getUndefPorts();
-                //parentPorts = portHashMap.get(node.getParent().getLabel());
 
                 for (OpNode portNode: portNodes) {
 
                     if(parentDockNodes.containsKey(portNode.getPortNum())){
                         System.out.println("dock: " +  parentDockNodes.get(portNode.getPortNum()).getNodeName() + " matched with port: " + portNode.getNodeName());
-
-                        if(undefPorts.containsKey(portNode.getPortNum())){
-
+                        if(node.getParent() != null){
                             parentPorts = portHashMap.get(node.getParent().getLabel());
                             for (OpNode parPort: parentPorts) {
                                 if(parPort.isUndef() && parPort.getPortNum() == portNode.getPortNum()){
