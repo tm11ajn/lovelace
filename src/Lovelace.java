@@ -1,44 +1,51 @@
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Lovelace {
+
     public static void main(String[] args) {
 
         inputCheck inputChecker = new inputCheck(args);
         inputChecker.runNumArgCheck();
-        String tree = args[0];
+        Scanner scan;
+        File treeFile = inputChecker.validateTreeFile(args[0]);
+        File grammarFile = inputChecker.validateTreeFile(args[1]);
 
-        inputChecker.runNumArgCheck();
-        inputChecker.validateFile(args[1]);
 
 
-        OperationParser opPars = new OperationParser(args[1]);
 
+        OperationParser opPars = new OperationParser(grammarFile);
         HashMap<String, Operation> operationHashMap = opPars.getOperationHashMap();
-
+        DAGGenerator generator = new DAGGenerator(operationHashMap);
         TreeParser treeParser = new TreeParser();
-        treeParser.parseLine(args[0]);
+        int DAGNum = 1;
 
-        ArrayList<TreeNode> treeNodes = treeParser.getTreeNodes();
+        try {
+            String currentTree;
+            scan = new Scanner(treeFile);
+            ArrayList<TreeNode> treeNodes;
+            while(scan.hasNextLine()){
 
-        for (TreeNode node: treeNodes) {
+                currentTree = scan.nextLine();
 
-            if(!node.isRoot()){
-                if(node.isLeaf()){
-                    System.out.println("Leaf Node: " + node.getLabel() + " with parent: " + node.getParent().getLabel());
-                }else{
-                    System.out.println("Node: " + node.getLabel() + " with parent: " + node.getParent().getLabel());
-                }
+                treeParser.parseLine(currentTree);
+                treeNodes = treeParser.getTreeNodes();
 
-            }else System.out.println("Node: " + node.getLabel() + " is the root");
+                System.out.println("DAG number: " + DAGNum);
+                DAGNum++;
+                generator.getPortFromChild(treeNodes);
+                treeNodes.clear();
+            }
 
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-
-        DAGGenerator generator = new DAGGenerator(treeNodes, operationHashMap);
-        System.out.println("hello");
-        generator.getPortFromChild();
-        System.out.println("hello1");
 
         System.exit(0);
     }
+
 }

@@ -1,5 +1,6 @@
 
 import java.io.File;
+import java.util.ArrayList;
 
 
 public class inputCheck {
@@ -21,12 +22,39 @@ public class inputCheck {
         }
     }
 
-    public void validateFile(String operations){
-        File grammar = new File(operations);
+    public void validateFiles(String[] args){
+        File grammar = new File(args[1]);
+        File trees = new File(args[0]);
         if(!grammar.isFile()){
             System.out.println("The grammar file is not a valid file");
             System.exit(1);
         }
+        if(!trees.isFile()){
+            System.out.println("The tree file is not a valid file");
+            System.exit(1);
+        }
+    }
+
+    public File validateGrammarFile(String grammar){
+        File grammarFile = new File(grammar);
+
+        if(!grammarFile.isFile()){
+            System.out.println("The grammar file is not a valid file");
+            System.exit(1);
+        }
+
+        return grammarFile;
+    }
+
+    public File validateTreeFile(String tree){
+        File treeFile = new File(tree);
+
+        if(!treeFile.isFile()){
+            System.out.println("The tree file is not a valid file");
+            System.exit(1);
+        }
+
+        return treeFile;
     }
 
     public int depthOfTree(String tree){

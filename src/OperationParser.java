@@ -15,8 +15,8 @@ public class OperationParser {
     private static final int UNION = 4;
     private int currentRow = 0;
 
-    public OperationParser(String args1){
-        this.operations = new File(args1);
+    public OperationParser(File operationFile){
+        this.operations = operationFile;
 
         try{
             ParseOperations();
@@ -37,12 +37,10 @@ public class OperationParser {
     private void ParseOperations() throws FileNotFoundException {
         Scanner scanner = new Scanner(operations);
         int mode = 0;
-
         Operation operation = null;
 
         while(scanner.hasNextLine()){
             currentRow++;
-
             String line = scanner.nextLine();
 
             if(line.length() == 0) continue;

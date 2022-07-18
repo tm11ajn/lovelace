@@ -7,77 +7,14 @@ public class DAGGenerator {
     private ArrayList<Edge> DAGEdges = new ArrayList<>();
     private LinkedList<OpNode> portNodesFromPrevOperationQueue = new LinkedList<>();
 
-    public DAGGenerator(ArrayList<TreeNode> treeNodes, HashMap<String, Operation> operationHashMap){
-        this.treeNodes = treeNodes;
+    public DAGGenerator(HashMap<String, Operation> operationHashMap){
         this.operationHashMap = operationHashMap;
 
     }
 
-    public ArrayList<Edge> buildDAG(){
-        System.out.println("---DAG---");
-        Operation prevOperation = null;
-        String targetNode;
-        Operation currentOperation;
+    public void getPortFromChild(ArrayList<TreeNode> treeNodes){
+        this.treeNodes = treeNodes;
 
-
-        for (TreeNode node : treeNodes) {
-
-            if(operationHashMap.containsKey(node.getLabel())){
-                currentOperation = operationHashMap.get(node.getLabel());
-                //FUNKAR ENBART OM grammatiken är sorterad från första till sista PORT för varj operation. EXEMPEL
-                // A PORT 1
-                // B PORT 2
-                //skoja funkar ej.
-
-
-                while(!portNodesFromPrevOperationQueue.isEmpty()){
-                    OpNode removedNode = portNodesFromPrevOperationQueue.pollLast();
-                    for (OpNode dockNode: currentOperation.getNodes()) {
-
-                        if(dockNode.getDockNum() == removedNode.getPortNum()){
-                            int argNum = dockNode.getDockNum()-1;
-                            String label = "arg" + argNum;
-
-                            if(removedNode.getNodeName().equals("undef")){
-                                targetNode = prevOperation.getPortNode(dockNode.getDockNum()).getNodeName();
-                                System.out.println("TARGET NODE: " + targetNode);
-                            }else{
-                                targetNode = removedNode.getNodeName();
-                            }
-
-
-                            System.out.println("THIS IS THE NEW NODE FROM DOCK " + dockNode.getNodeName() + " TO PORT "
-                            + targetNode + " with label: " + label);
-                            Edge newEdge = new Edge(dockNode.getNodeName(), removedNode.getNodeName(), label);
-                        }
-
-                    }
-                }
-
-                for (OpNode opNode: currentOperation.getNodes()){
-                    if(opNode.hasPort()){
-                        portNodesFromPrevOperationQueue.add(opNode);
-                    }
-                }
-
-                DAGEdges.addAll(currentOperation.getEdges());
-                prevOperation = currentOperation;
-
-            }else{
-                System.out.println("The given grammar does not support the operation: " + node.getLabel());
-                System.exit(1);
-            }
-
-
-
-        }
-
-        return null;
-    }
-
-
-
-    public void getPortFromChild(){
         HashMap<String, ArrayList<OpNode>> portHashMap = new HashMap<>();
         for (TreeNode operationNode: treeNodes) {
             if(operationHashMap.containsKey(operationNode.getLabel())){
@@ -99,6 +36,7 @@ public class DAGGenerator {
         }
 
         MatchDockWithPort(portHashMap);
+        DAGEdges.clear();
 
         /*
         for (TreeNode node : treeNodes) {
@@ -196,4 +134,68 @@ public class DAGGenerator {
     }
 
      */
+
+
+    public ArrayList<Edge> buildDAG(){
+        System.out.println("---DAG---");
+        Operation prevOperation = null;
+        String targetNode;
+        Operation currentOperation;
+
+
+        for (TreeNode node : treeNodes) {
+
+            if(operationHashMap.containsKey(node.getLabel())){
+                currentOperation = operationHashMap.get(node.getLabel());
+                //FUNKAR ENBART OM grammatiken är sorterad från första till sista PORT för varj operation. EXEMPEL
+                // A PORT 1
+                // B PORT 2
+                //skoja funkar ej.
+
+
+                while(!portNodesFromPrevOperationQueue.isEmpty()){
+                    OpNode removedNode = portNodesFromPrevOperationQueue.pollLast();
+                    for (OpNode dockNode: currentOperation.getNodes()) {
+
+                        if(dockNode.getDockNum() == removedNode.getPortNum()){
+                            int argNum = dockNode.getDockNum()-1;
+                            String label = "arg" + argNum;
+
+                            if(removedNode.getNodeName().equals("undef")){
+                                targetNode = prevOperation.getPortNode(dockNode.getDockNum()).getNodeName();
+                                System.out.println("TARGET NODE: " + targetNode);
+                            }else{
+                                targetNode = removedNode.getNodeName();
+                            }
+
+
+                            System.out.println("THIS IS THE NEW NODE FROM DOCK " + dockNode.getNodeName() + " TO PORT "
+                                    + targetNode + " with label: " + label);
+                            Edge newEdge = new Edge(dockNode.getNodeName(), removedNode.getNodeName(), label);
+                        }
+
+                    }
+                }
+
+                for (OpNode opNode: currentOperation.getNodes()){
+                    if(opNode.hasPort()){
+                        portNodesFromPrevOperationQueue.add(opNode);
+                    }
+                }
+
+                DAGEdges.addAll(currentOperation.getEdges());
+                prevOperation = currentOperation;
+
+            }else{
+                System.out.println("The given grammar does not support the operation: " + node.getLabel());
+                System.exit(1);
+            }
+
+
+
+        }
+
+        return null;
+    }
+
 }
