@@ -13,6 +13,8 @@ public class OperationParser {
     private static final int NODE = 2;
     private static final int EDGE = 3;
     private static final int UNION = 4;
+    private static final int DOCK = 5;
+    private static final int PORT = 6;
     private int currentRow = 0;
 
     public OperationParser(File operationFile){
@@ -60,6 +62,48 @@ public class OperationParser {
         scanner.close();
     }
 
+    private void ParseOps() throws FileNotFoundException{
+        Scanner scanner = new Scanner(operations);
+        int mode = 0;
+        int dockNum = 0;
+        Operation operation = null;
+        OpNode currentOpNode = null;
+        String[] portStrings;
+        String[] dockStrings;
+        String[] nodeStrings;
+
+        while(scanner.hasNextLine()){
+            currentRow++;
+            String line = scanner.nextLine();
+
+            if(line.length() == 0) continue;
+
+            mode = SetMode1(line, mode);
+            if(mode == OPERATION){
+                operation = createOperation(line);
+                operationHashMap.put(operation.getOpName(), operation);
+            }else if(mode == NODE){
+                nodeStrings = trimAndSplit(line);
+                currentOpNode = new OpNode(nodeStrings[1], dockNum);
+                dockNum++;
+                //if(!line.contains("nodes")) addValidNodesToOperation(operation, line);
+            }else if(mode == EDGE){
+                if(!line.contains("edge")) addValidEdgeToOperation(operation, line);
+            }else if(mode == UNION){
+                System.out.println("union");
+            }else if(mode == DOCK){
+
+            }else if(mode == PORT){
+                portStrings = trimAndSplit(line);
+
+                if(currentOpNode != null){
+                    currentOpNode.setPortNum(portStrings[1]);
+                }
+            }
+        }
+        scanner.close();
+    }
+
     /**
      * Choose mode depending on which keyword the line contains
      * @param line scanned line
@@ -75,6 +119,24 @@ public class OperationParser {
             mode = 3;
         }else if(line.contains("union")){
             mode = 4;
+        }
+
+        return mode;
+    }
+
+    private int SetMode1(String line, int mode){
+        if(line.contains("OPERATION")){
+            mode = 1;
+        }else if(line.contains("node")){
+            mode = 2;
+        }else if(line.contains("edges")){
+            mode = 3;
+        }else if(line.contains("union")){
+            mode = 4;
+        }else if(line.contains("DOCK")){
+            mode = 5;
+        }else if(line.contains("PORT")){
+            mode = 6;
         }
 
         return mode;

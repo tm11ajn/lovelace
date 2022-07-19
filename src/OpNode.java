@@ -16,6 +16,15 @@ public class OpNode {
 
     private ArrayList<String> args = new ArrayList<>();
 
+    public OpNode(String name, int dockNum){
+        this.nodeName = name;
+        this.dockNum = dockNum;
+
+        if(nodeName.equals("undef")){
+            this.undef = true;
+        }
+    }
+
     public OpNode(String[] info){
         this.nodeName = info[0];
 
@@ -98,5 +107,12 @@ public class OpNode {
         return args;
     }
 
+    public void addDock(Dock dock) {
+        docks.add(dock);
+    }
+
+    public void setPortNum(String portNum) {
+        this.portNum = Integer.parseInt(portNum);
+    }
 }
 

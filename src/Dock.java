@@ -1,8 +1,8 @@
 public class Dock {
     private int dockNum;
-    private String arg;
+    private String[] arg;
 
-    public Dock(int dockNum, String arg){
+    public Dock(int dockNum, String[] arg){
         this.dockNum = dockNum;
         this.arg = arg;
 
@@ -12,7 +12,7 @@ public class Dock {
         return dockNum;
     }
 
-    public String getArg() {
+    public String[] getArg() {
         return arg;
     }
 }
