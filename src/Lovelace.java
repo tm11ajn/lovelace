@@ -15,9 +15,6 @@ public class Lovelace {
         File treeFile = inputChecker.validateTreeFile(args[0]);
         File grammarFile = inputChecker.validateTreeFile(args[1]);
 
-
-
-
         OperationParser opPars = new OperationParser(grammarFile);
         HashMap<String, Operation> operationHashMap = opPars.getOperationHashMap();
         DAGGenerator generator = new DAGGenerator(operationHashMap);

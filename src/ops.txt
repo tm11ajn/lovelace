@@ -1,0 +1,192 @@
+
+OPERATION: sx
+	node: x
+
+        PORT: 1
+
+	edges:
+
+OPERATION: s'x
+	node: x
+
+        PORT: 1
+
+	edges:
+
+
+OPERATION: zs1
+	node: z
+
+        DOCK:
+            1 arg0 arg1
+
+        PORT: 1
+
+	edges:
+
+OPERATION: zs2
+	node: z
+
+        DOCK:
+            1 arg0
+
+        PORT: 1
+
+	node: y
+
+	edges:
+	z -> y arg1
+
+OPERATION: zs3
+	node: z
+	    DOCK:
+            1 arg1
+
+        PORT: 1
+
+	node: x
+
+	edges:
+	z -> x arg0
+
+OPERATION: zs4
+	node: z
+	    PORT: 1
+
+	    DOCK:
+            1 arg0
+            2 arg1
+
+	edges:
+
+OPERATION: trys
+	node: try
+	    DOCK:
+            1 arg0
+            2 arg1
+
+	    PORT: 1
+
+	edges:
+
+OPERATION: persuades
+	node: x
+	node: persuade
+	    DOCK:
+            1 arg1
+            2 arg2
+	    PORT: 1
+
+
+	edges:
+	persuade -> x arg0
+
+OPERATION: persuadess
+
+	node: persuade
+        DOCK:
+            1 arg0
+            2 arg1
+            3 arg2
+
+        PORT: 1
+
+	edges:
+
+OPERATION: zc1
+	node: z
+	    DOCK:
+	        1 arg0 arg1
+	    PORT: 2
+
+	node: undef
+	    PORT: 1
+
+	edges:
+
+OPERATION: zc2
+	nodes: z
+	    DOCK:
+	        1 arg0
+
+	    PORT: 2
+
+	node: y
+	node: undef
+	    PORT: 1
+
+	edges:
+	z -> y arg1
+
+OPERATION: zc3
+	nodes: z
+	    DOCK:
+	        1 arg1
+	    PORT: 2
+
+	node: x
+	    PORT: 1
+	edges:
+	z -> x arg0
+
+OPERATION: zc4
+	nodes: z
+	    DOCK:
+	        1 arg0
+	        2 arg1
+	    PORT: 2
+
+	node: undef
+	    PORT: 1
+
+	edges:
+
+OPERATION: tryc
+	node: try
+	    DOCK:
+	        1 arg0
+	        2 arg1
+	    PORT: 2
+
+	node: undef
+	    PORT: 1
+	edges:
+
+OPERATION: persuadec
+	node: persuade
+	    DOCK:
+	    1 arg1
+	    2 arg2
+	    PORT: 2
+
+    node: x
+        PORT: 1
+
+	edges:
+	persuade -> x arg0
+
+
+OPERATION: persuadecc
+	nodes: persuade
+	    DOCK:
+	    1 arg0
+	    2 arg1
+	    3 arg2
+	    PORT: 2
+
+    node: undef
+        PORT: 1
+
+	edges:
+
+OPERATION: u
+	1 union 1
+	undef PORT 1
+	undef PORT 2
+
+
+OPERATION: u'
+	1 union 2
+	undef PORT 1
+	undef PORT 2
+	undef PORT 3

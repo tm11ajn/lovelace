@@ -3,6 +3,11 @@ import java.util.ArrayList;
 public class OpNode {
     private int portNum = -1;
     private int dockNum = -1;
+
+    private ArrayList<Integer> ports = new ArrayList<>();
+    private ArrayList<Dock> docks = new ArrayList<>();
+    private int nodeNum;
+
     private String nodeName;
     private OpNode parent = null;
     private String edgeArgument = null;
@@ -58,8 +63,6 @@ public class OpNode {
 
         if(nodeInfo[1].equals("PORT")){
             portNum = Integer.parseInt(nodeInfo[2]);
-
-        //    if(nodeInfo.length > 3) this.receiveArgument = nodeInfo[3];
         }
     }
 

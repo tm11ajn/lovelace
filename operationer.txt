@@ -138,9 +138,15 @@ OPERATION: persuadecc
 
 OPERATION: u
 	1 union 1
+	undef PORT 1
+	undef PORT 2
+
 
 OPERATION: u'
 	1 union 2
+	undef PORT 1
+	undef PORT 2
+	undef PORT 3
 
 
 
