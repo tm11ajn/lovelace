@@ -1,16 +1,15 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class OpNode {
     private int portNum = -1;
     private int dockNum = -1;
 
-    private ArrayList<Dock> docks = new ArrayList<>();
+    private HashMap<Integer, Dock> docks = new HashMap<>();
     private int nodeNum;
 
     private String nodeName;
-    private OpNode parent = null;
     private String edgeArgument = null;
-    private String receiveArgument = null;
     private boolean undef = false;
 
     private ArrayList<String> args = new ArrayList<>();
@@ -74,17 +73,8 @@ public class OpNode {
         }
     }
 
-    public OpNode getParent() {
-        return parent;
-    }
-
-    public void setParent(OpNode parent) {
-        this.parent = parent;
-    }
-
     public boolean hasPort(){return portNum != -1;}
 
-    public boolean hasDock(){return dockNum != -1;}
 
     public String getEdgeArgument() {
         return edgeArgument;
@@ -92,10 +82,6 @@ public class OpNode {
 
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
-    }
-
-    public String getReceiveArgument() {
-        return receiveArgument;
     }
 
     public boolean isUndef(){
@@ -106,17 +92,26 @@ public class OpNode {
         return args;
     }
 
-    public void addDock(Dock dock) {
-        docks.add(dock);
+    public void addDock(int dockNum, Dock dock) {
+        docks.put(dockNum,dock);
     }
 
     public void setPortNum(String portNum) {
         this.portNum = Integer.parseInt(portNum);
     }
 
-    public ArrayList<Dock> getDocks() {
+    public HashMap<Integer, Dock> getDocks() {
         return docks;
     }
 
+    public boolean isDockNode(){
+        if(!docks.isEmpty()) return true;
+
+        return false;
+    }
+
+    public int getNodeNum() {
+        return nodeNum;
+    }
 }
 

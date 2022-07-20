@@ -14,57 +14,45 @@ public class DAGGenerator {
 
     public void getPortFromChild(ArrayList<TreeNode> treeNodes){
         this.treeNodes = treeNodes;
-
         HashMap<String, ArrayList<OpNode>> portHashMap = new HashMap<>();
+
         for (TreeNode operationNode: treeNodes) {
             if(operationHashMap.containsKey(operationNode.getLabel())){
                 Operation operation = operationHashMap.get(operationNode.getLabel());
 
-                for (OpNode opNode: operation.getPortNodeArray()) {
+                if(operationNode.getParent() != null){
+                    //System.out.print("Parent operation: " + operationNode.getParent().getLabel()+  " available ports:");
+                    for (OpNode portNode: operation.getPortNodeArray()) {
 
-                    if(operationNode.getParent() != null){
                         if(portHashMap.containsKey(operationNode.getParent().getLabel())){
-                            portHashMap.get(operationNode.getParent().getLabel()).add(opNode);
+                            //System.out.print(" " + portNode.getNodeName());
+                            portHashMap.get(operationNode.getParent().getLabel()).add(portNode);
                         }else {
                             ArrayList<OpNode> portNodes = new ArrayList<>();
-                            portNodes.add(opNode);
+                            //System.out.print(" " + portNode.getNodeName());
+                            portNodes.add(portNode);
                             portHashMap.put(operationNode.getParent().getLabel(), portNodes);
                         }
+
                     }
+                    //System.out.print("\n");
                 }
             }
         }
 
         MatchDockWithPort(portHashMap);
         DAGEdges.clear();
-
-        /*
-        for (TreeNode node : treeNodes) {
-            if(operationHashMap.containsKey(node.getLabel()) && portHashMap.containsKey(node.getLabel())){
-
-                String operationName = node.getLabel();
-
-                ArrayList<OpNode> portNodes = portHashMap.get(operationName);
-
-
-                for (OpNode portNode: portNodes) {
-                    OpNode dockNode = operationHashMap.get(operationName).getDockNodes().get(portNode.getPortNum());
-
-                    System.out.println("Node: " + dockNode.getNodeName() + " with openPort " + portNode.getNodeName() +
-                            " with argument: " + dockNode.getEdgeArgument());
-                }
-            }
-        }
-
-         */
     }
 
     private void MatchDockWithPort(HashMap<String, ArrayList<OpNode>> portHashMap){
         OpNode dockNode;
+        OpNode fromNode;
+        OpNode toNode;
         Operation currentOperation;
         String operationName;
+        String singleArg;
         ArrayList<OpNode> portNodes;
-        HashMap<Integer, OpNode> parentDockNodes;
+        ArrayList<OpNode> parentDockNodes;
 
         for (TreeNode node : treeNodes) {
             if(operationHashMap.containsKey(node.getLabel()) && portHashMap.containsKey(node.getLabel())){
@@ -74,21 +62,45 @@ public class DAGGenerator {
                 DAGEdges.addAll(currentOperation.getEdges());
 
                 portNodes = portHashMap.get(operationName);
-                parentDockNodes = currentOperation.getDockNodes();
+                parentDockNodes = currentOperation.getDockNodes1();
 
                 for (OpNode portNode: portNodes) {
+                    for(OpNode parentDockNode: parentDockNodes){
+                        if(parentDockNode.getDocks().containsKey(portNode.getPortNum())){
+                            fromNode = parentDockNode;
+                            toNode = portNode;
+                            if(fromNode.getDocks().get(portNode.getPortNum()).getArgs() != null){
+                                for (String arg: fromNode.getDocks().get(portNode.getPortNum()).getArgs()) {
+                                    DAGEdges.add(new Edge(fromNode, portNode, arg));
+                                    //System.out.println(fromNode.getNodeName() + "->" + toNode.getNodeName() + " with arg " + arg);
+                                }
+                            }else if(fromNode.getDocks().get(portNode.getPortNum()).getSingleArg() != null){
+                                singleArg = fromNode.getDocks().get(portNode.getPortNum()).getSingleArg();
+
+                                DAGEdges.add(new Edge(fromNode, toNode, singleArg));
+                                //System.out.println(fromNode.getNodeName() + "->" + toNode.getNodeName() + " with arg " + singleArg);
+                            }
+
+                        }
+                        setUndefinedNode(node, portNode, portHashMap);
+                    }
+
+                    /*
                     if(parentDockNodes.containsKey(portNode.getPortNum())){
 
                         dockNode = parentDockNodes.get(portNode.getPortNum());
                         createNewEdges(portNode, dockNode);
                         setUndefinedNode(node, portNode, portHashMap);
                     }
+
+                     */
                 }
             }
         }
-
+        System.out.println("EDGES: ");
         for (Edge edge: DAGEdges) {
-            System.out.println(edge.getFromNode() + " -> " + edge.getToNode() + " with arg: " + edge.getLabel());
+            System.out.println(edge.getFromNode().getNodeName() + "(" + edge.getFromNode().getNodeNum()+ ")" + " -> "
+                    + edge.getToNode().getNodeName()+ "(" + edge.getToNode().getNodeNum()+ ")" + " with arg: " + edge.getLabel());
 
         }
     }
@@ -106,6 +118,7 @@ public class DAGGenerator {
         }
     }
 
+    /*
     private void createNewEdges(OpNode portNode, OpNode dockNode){
 
         if(dockNode.getEdgeArgument() == null){
@@ -116,6 +129,8 @@ public class DAGGenerator {
             DAGEdges.add(new Edge(dockNode.getNodeName(), portNode.getNodeName(), dockNode.getEdgeArgument()));
         }
     }
+
+     */
 
     /*
     private void matchDocksWithPorts(ArrayList<OpNode> portNodes, Operation currentOperation ){
@@ -171,7 +186,7 @@ public class DAGGenerator {
 
                             System.out.println("THIS IS THE NEW NODE FROM DOCK " + dockNode.getNodeName() + " TO PORT "
                                     + targetNode + " with label: " + label);
-                            Edge newEdge = new Edge(dockNode.getNodeName(), removedNode.getNodeName(), label);
+                            Edge newEdge = new Edge(dockNode, removedNode, label);
                         }
 
                     }

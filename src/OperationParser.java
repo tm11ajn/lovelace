@@ -38,6 +38,7 @@ public class OperationParser {
      * Scanning the operation file and creating operations
      * @throws FileNotFoundException
      */
+    /*
     private void ParseOperations() throws FileNotFoundException {
         Scanner scanner = new Scanner(operations);
         int mode = 0;
@@ -64,12 +65,15 @@ public class OperationParser {
         scanner.close();
     }
 
+     */
+
     private void ParseOps() throws FileNotFoundException{
         Scanner scanner = new Scanner(operations);
         int mode = 0;
         int nodeNum = 0;
         Operation operation = null;
         OpNode currentOpNode = null;
+        HashMap<String, OpNode> currentOperationNodes = new HashMap<>();
         String[] portStrings;
         String[] dockStrings;
         String[] nodeStrings;
@@ -84,14 +88,16 @@ public class OperationParser {
             if(mode == OPERATION){
                 operation = createOperation(line);
                 operationHashMap.put(operation.getOpName(), operation);
+                currentOperationNodes.clear();
             }else if(mode == NODE){
                 nodeStrings = trimAndSplit(line);
                 currentOpNode = new OpNode(nodeStrings[1], nodeNum);
+                currentOperationNodes.put(currentOpNode.getNodeName(), currentOpNode);
                 operation.addNode(currentOpNode);
                 nodeNum++;
                 //if(!line.contains("nodes")) addValidNodesToOperation(operation, line);
             }else if(mode == EDGE){
-                if(!line.contains("edge")) addValidEdgeToOperation(operation, line);
+                if(!line.contains("edge")) addValidEdgeToOperation(operation, line, currentOperationNodes);
             }else if(mode == UNION){
                 System.out.println("union");
             }else if(mode == DOCK){
@@ -99,7 +105,7 @@ public class OperationParser {
                     dockStrings = trimAndSplit(line);
                     Dock dock = new Dock(dockStrings);
                     if(currentOpNode != null){
-                        currentOpNode.addDock(dock);
+                        currentOpNode.addDock(dock.getDockNum(), dock);
                     }
                 }
 
@@ -120,6 +126,7 @@ public class OperationParser {
      * @param mode previous mode
      * @return new mode
      */
+    //TODO REMOVE WHEN DONE WITH BETTER
     private int SetMode(String line, int mode){
         if(line.contains("OPERATION")){
             mode = 1;
@@ -177,7 +184,7 @@ public class OperationParser {
         System.out.println("Operation: " + operation.getOpName());
 
         System.out.println("\tNODES:");
-        ArrayList<Dock> docks;
+        HashMap<Integer, Dock> docks;
 
         for (OpNode node: operation.getNodes()) {
             System.out.println("\t\tNode name: " + node.getNodeName());
@@ -185,7 +192,7 @@ public class OperationParser {
 
             if(!docks.isEmpty()){
 
-                for(Dock dock : docks){
+                for(Dock dock : docks.values()){
                     System.out.print("\t\t\tDock number: " + dock.getDockNum() + " with args:");
                     if(dock.getSingleArg() != null){
                         System.out.println(" " + dock.getSingleArg());
@@ -204,7 +211,7 @@ public class OperationParser {
 
         System.out.println("\tEDGES:");
         for (Edge edge : operation.getEdges()){
-            System.out.println("\t\tFrom node " + edge.getFromNode() + " to node " + edge.getToNode() + " with label " +
+            System.out.println("\t\tFrom node " + edge.getFromNode().getNodeName() + " to node " + edge.getToNode().getNodeName() + " with label " +
                     edge.getLabel());
         }
     }
@@ -214,7 +221,7 @@ public class OperationParser {
         return line.split(" ");
     }
 
-    private void addValidEdgeToOperation(Operation operation, String line){
+    private void addValidEdgeToOperation(Operation operation, String line, HashMap<String, OpNode> nodes){
             String nonexNode;
 
         if(!line.contains("edge")) {
@@ -226,7 +233,9 @@ public class OperationParser {
             }else if((nonexNode = validateNodesInEdge(edgeInfo[0], operation)) != null){
                 referringToNonexistentNode(line, nonexNode);
             }else{
-                operation.addEdge(new Edge(edgeInfo));
+                OpNode fromNode = nodes.get(edgeInfo[0]);
+                OpNode toNode = nodes.get(edgeInfo[2]);
+                operation.addEdge(new Edge(fromNode, toNode, edgeInfo[3]));
             }
         }
     }

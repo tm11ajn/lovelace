@@ -70,6 +70,15 @@ public class Operation {
         return dockMap;
     }
 
+    public ArrayList<OpNode> getDockNodes1(){
+        ArrayList<OpNode> dockNodes = new ArrayList<>();
+        for (OpNode node: nodes) {
+            if(node.isDockNode()) dockNodes.add(node);
+        }
+
+        return dockNodes;
+    }
+
     public ArrayList<OpNode> getDockNodes2(){
         ArrayList<OpNode> dockNodes = new ArrayList<>();
         for (OpNode node: nodes) {

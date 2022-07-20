@@ -16,12 +16,13 @@ public class Lovelace {
         File grammarFile = inputChecker.validateTreeFile(args[1]);
 
         OperationParser opPars = new OperationParser(grammarFile);
-        /*
+
         HashMap<String, Operation> operationHashMap = opPars.getOperationHashMap();
         DAGGenerator generator = new DAGGenerator(operationHashMap);
         TreeParser treeParser = new TreeParser();
         int DAGNum = 1;
 
+        System.out.println("THIS IS AFTER PARSING THE OPERATIONS:");
         try {
             String currentTree;
             scan = new Scanner(treeFile);
@@ -38,12 +39,12 @@ public class Lovelace {
                 generator.getPortFromChild(treeNodes);
                 treeNodes.clear();
             }
+            scan.close();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-         */
 
         System.exit(0);
     }
