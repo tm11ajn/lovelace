@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -21,10 +22,11 @@ public class OperationParser {
         this.operations = operationFile;
 
         try{
-            ParseOperations();
+            //ParseOperations();
+            ParseOps();
             System.out.println("@@@@@@@PRINTING OPERATIONS");
             for (Entry<String, Operation> operation: operationHashMap.entrySet()) {
-                testPrintOperation(operation.getValue());
+                testPrintOperation1(operation.getValue());
             }
 
         }catch (FileNotFoundException e){
@@ -65,7 +67,7 @@ public class OperationParser {
     private void ParseOps() throws FileNotFoundException{
         Scanner scanner = new Scanner(operations);
         int mode = 0;
-        int dockNum = 0;
+        int nodeNum = 0;
         Operation operation = null;
         OpNode currentOpNode = null;
         String[] portStrings;
@@ -84,14 +86,22 @@ public class OperationParser {
                 operationHashMap.put(operation.getOpName(), operation);
             }else if(mode == NODE){
                 nodeStrings = trimAndSplit(line);
-                currentOpNode = new OpNode(nodeStrings[1], dockNum);
-                dockNum++;
+                currentOpNode = new OpNode(nodeStrings[1], nodeNum);
+                operation.addNode(currentOpNode);
+                nodeNum++;
                 //if(!line.contains("nodes")) addValidNodesToOperation(operation, line);
             }else if(mode == EDGE){
                 if(!line.contains("edge")) addValidEdgeToOperation(operation, line);
             }else if(mode == UNION){
                 System.out.println("union");
             }else if(mode == DOCK){
+                if(!line.contains("DOCK")){
+                    dockStrings = trimAndSplit(line);
+                    Dock dock = new Dock(dockStrings);
+                    if(currentOpNode != null){
+                        currentOpNode.addDock(dock);
+                    }
+                }
 
             }else if(mode == PORT){
                 portStrings = trimAndSplit(line);
@@ -141,7 +151,7 @@ public class OperationParser {
 
         return mode;
     }
-
+    //TODO REMOVE WHEN NEW WORKS
     private void testPrintOperation(Operation operation){
         System.out.println("Operation: " + operation.getOpName());
 
@@ -150,6 +160,42 @@ public class OperationParser {
             System.out.println("\t\tNode name: " + node.getNodeName());
             if(node.getDockNum() != -1){
                 System.out.println("\t\t\tDOCK number:" + node.getDockNum());
+            }
+            if(node.getPortNum() != -1){
+                System.out.println("\t\t\tPORT number:" + node.getPortNum());
+            }
+        }
+
+        System.out.println("\tEDGES:");
+        for (Edge edge : operation.getEdges()){
+            System.out.println("\t\tFrom node " + edge.getFromNode() + " to node " + edge.getToNode() + " with label " +
+                    edge.getLabel());
+        }
+    }
+
+    private void testPrintOperation1(Operation operation){
+        System.out.println("Operation: " + operation.getOpName());
+
+        System.out.println("\tNODES:");
+        ArrayList<Dock> docks;
+
+        for (OpNode node: operation.getNodes()) {
+            System.out.println("\t\tNode name: " + node.getNodeName());
+            docks = node.getDocks();
+
+            if(!docks.isEmpty()){
+
+                for(Dock dock : docks){
+                    System.out.print("\t\t\tDock number: " + dock.getDockNum() + " with args:");
+                    if(dock.getSingleArg() != null){
+                        System.out.println(" " + dock.getSingleArg());
+                    }else{
+                        for (String arg: dock.getArgs()) {
+                            System.out.print(" " + arg);
+                        }
+                        System.out.print("\n");
+                    }
+                }
             }
             if(node.getPortNum() != -1){
                 System.out.println("\t\t\tPORT number:" + node.getPortNum());

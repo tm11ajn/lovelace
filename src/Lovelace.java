@@ -16,6 +16,7 @@ public class Lovelace {
         File grammarFile = inputChecker.validateTreeFile(args[1]);
 
         OperationParser opPars = new OperationParser(grammarFile);
+        /*
         HashMap<String, Operation> operationHashMap = opPars.getOperationHashMap();
         DAGGenerator generator = new DAGGenerator(operationHashMap);
         TreeParser treeParser = new TreeParser();
@@ -41,6 +42,8 @@ public class Lovelace {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+         */
 
         System.exit(0);
     }

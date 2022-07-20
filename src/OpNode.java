@@ -4,7 +4,6 @@ public class OpNode {
     private int portNum = -1;
     private int dockNum = -1;
 
-    private ArrayList<Integer> ports = new ArrayList<>();
     private ArrayList<Dock> docks = new ArrayList<>();
     private int nodeNum;
 
@@ -16,9 +15,9 @@ public class OpNode {
 
     private ArrayList<String> args = new ArrayList<>();
 
-    public OpNode(String name, int dockNum){
+    public OpNode(String name, int nodeNum){
         this.nodeName = name;
-        this.dockNum = dockNum;
+        this.nodeNum = nodeNum;
 
         if(nodeName.equals("undef")){
             this.undef = true;
@@ -114,5 +113,10 @@ public class OpNode {
     public void setPortNum(String portNum) {
         this.portNum = Integer.parseInt(portNum);
     }
+
+    public ArrayList<Dock> getDocks() {
+        return docks;
+    }
+
 }
 
