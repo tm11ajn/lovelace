@@ -3,15 +3,10 @@ import java.util.HashMap;
 
 public class OpNode {
     private int portNum = -1;
-    private int dockNum = -1;
-
     private HashMap<Integer, Dock> docks = new HashMap<>();
     private int nodeNum;
-
     private String nodeName;
     private boolean undef = false;
-
-    private ArrayList<String> args = new ArrayList<>();
 
     public OpNode(String name, int nodeNum){
         this.nodeName = name;
@@ -22,10 +17,6 @@ public class OpNode {
         }
     }
 
-    public int getDockNum() {
-        return dockNum;
-    }
-
     public int getPortNum() {
         return portNum;
     }
@@ -34,9 +25,7 @@ public class OpNode {
         return nodeName;
     }
 
-
     public boolean hasPort(){return portNum != -1;}
-
 
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
@@ -45,7 +34,6 @@ public class OpNode {
     public boolean isUndef(){
         return undef;
     }
-
 
     public void addDock(int dockNum, Dock dock) {
         docks.put(dockNum,dock);

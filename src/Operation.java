@@ -5,6 +5,7 @@ public class Operation {
     private ArrayList<OpNode> nodes = new ArrayList<>();
     private ArrayList<Edge> edges = new ArrayList<>();
     private final String opType;
+    private Boolean isUsed = false;
 
     public Operation(String name, String opType){
         this.opName = name;
@@ -66,5 +67,13 @@ public class Operation {
 
     public String getOpType() {
         return opType;
+    }
+
+    public Boolean getUsed() {
+        return isUsed;
+    }
+
+    public void setUsed(Boolean used) {
+        isUsed = used;
     }
 }

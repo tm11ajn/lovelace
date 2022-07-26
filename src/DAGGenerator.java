@@ -6,6 +6,7 @@ public class DAGGenerator {
     private HashMap<String, Operation> operationHashMap;
     private ArrayList<Edge> DAGEdges = new ArrayList<>();
     private LinkedList<OpNode> portNodesFromPrevOperationQueue = new LinkedList<>();
+    private int nodeNumber = 1000;
 
     public DAGGenerator(HashMap<String, Operation> operationHashMap){
         this.operationHashMap = operationHashMap;
@@ -28,6 +29,13 @@ public class DAGGenerator {
                         for(TreeNode child : operationNode.getChildren()){
                             if(operationHashMap.containsKey(child.getLabel())){
                                 childOp = operationHashMap.get(child.getLabel());
+                                if(childOp.getUsed()){
+                                    childOp = new Operation(childOp);
+                                    nodeNumber = childOp.setNodeNums(nodeNumber);
+                                }else {
+                                    childOp.setUsed(true);
+                                }
+
                                 childPorts.addAll(childOp.getPortNodeArray());
                             }
                         }
@@ -65,10 +73,8 @@ public class DAGGenerator {
         OpNode toNode;
         Operation currentOperation;
         String operationName;
-        String singleArg;
         ArrayList<OpNode> portNodes;
         ArrayList<OpNode> parentDockNodes;
-        int nodeNum = 0;
 
         for (TreeNode node : treeNodes) {
             if(operationHashMap.containsKey(node.getLabel()) && portHashMap.containsKey(node.getLabel())){
@@ -76,7 +82,7 @@ public class DAGGenerator {
                 operationName = node.getLabel();
 
                 currentOperation = operationHashMap.get(operationName);
-                //nodeNum = currentOperation.setNodeNums(nodeNum);
+
 
                 DAGEdges.addAll(currentOperation.getEdges());
 
