@@ -35,6 +35,7 @@ public class TreeParser {
             String currentString = "";
 
             TreeNode tree = null;
+            TreeNode child = null;
             String treeString = null;
             LinkedList<TreeNode> children = new LinkedList<>();
 
@@ -83,7 +84,9 @@ public class TreeParser {
 
             while (!children.isEmpty()) {
                 tree.hasChild(true);
-                children.pollFirst().setParent(tree);
+                child = children.pollFirst();
+                child.setParent(tree);
+                tree.addChild(child);
             }
 
             return tree;

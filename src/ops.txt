@@ -1,12 +1,12 @@
 
-OPERATION: sx
+OPERATION: sx S
 	node: x
 
         PORT: 1
 
 	edges:
 
-OPERATION: s'x
+OPERATION: s'x S
 	node: x
 
         PORT: 1
@@ -14,7 +14,7 @@ OPERATION: s'x
 	edges:
 
 
-OPERATION: zs1
+OPERATION: zs1 S
 	node: z
 
         DOCK:
@@ -24,7 +24,7 @@ OPERATION: zs1
 
 	edges:
 
-OPERATION: zs2
+OPERATION: zs2 S
 	node: z
 
         DOCK:
@@ -37,7 +37,7 @@ OPERATION: zs2
 	edges:
 	z -> y arg1
 
-OPERATION: zs3
+OPERATION: zs3 S
 	node: z
 	    DOCK:
             1 arg1
@@ -49,7 +49,7 @@ OPERATION: zs3
 	edges:
 	z -> x arg0
 
-OPERATION: zs4
+OPERATION: zs4 S
 	node: z
 	    PORT: 1
 
@@ -59,7 +59,7 @@ OPERATION: zs4
 
 	edges:
 
-OPERATION: trys
+OPERATION: trys S
 	node: try
 	    DOCK:
             1 arg0
@@ -69,7 +69,7 @@ OPERATION: trys
 
 	edges:
 
-OPERATION: persuades
+OPERATION: persuades S
 	node: x
 	node: persuade
 	    DOCK:
@@ -81,7 +81,7 @@ OPERATION: persuades
 	edges:
 	persuade -> x arg0
 
-OPERATION: persuadess
+OPERATION: persuadess S
 
 	node: persuade
         DOCK:
@@ -93,7 +93,7 @@ OPERATION: persuadess
 
 	edges:
 
-OPERATION: zc1
+OPERATION: zc1 C
 	node: z
 	    DOCK:
 	        1 arg0 arg1
@@ -104,7 +104,7 @@ OPERATION: zc1
 
 	edges:
 
-OPERATION: zc2
+OPERATION: zc2 C
 	node: z
 	    DOCK:
 	        1 arg0
@@ -118,7 +118,7 @@ OPERATION: zc2
 	edges:
 	z -> y arg1
 
-OPERATION: zc3
+OPERATION: zc3 C
 	node: z
 	    DOCK:
 	        1 arg1
@@ -129,7 +129,7 @@ OPERATION: zc3
 	edges:
 	z -> x arg0
 
-OPERATION: zc4
+OPERATION: zc4 C
 	node: z
 	    DOCK:
 	        1 arg0
@@ -141,7 +141,7 @@ OPERATION: zc4
 
 	edges:
 
-OPERATION: tryc
+OPERATION: tryc C
 	node: try
 	    DOCK:
 	        1 arg0
@@ -152,7 +152,7 @@ OPERATION: tryc
 	    PORT: 1
 	edges:
 
-OPERATION: persuadec
+OPERATION: persuadec C
 	node: persuade
 	    DOCK:
 	    1 arg1
@@ -166,7 +166,7 @@ OPERATION: persuadec
 	persuade -> x arg0
 
 
-OPERATION: persuadecc
+OPERATION: persuadecc C
 	node: persuade
 	    DOCK:
 	    1 arg0
@@ -180,10 +180,8 @@ OPERATION: persuadecc
 
 	edges:
 
-OPERATION: u
-	1 union 1
+OPERATION: u U
 
 
 
-OPERATION: u'
-	1 union 2
+OPERATION: u' U'

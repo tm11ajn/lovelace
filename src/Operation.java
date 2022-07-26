@@ -1,18 +1,33 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Operation {
-    private String opName;
+    private final String opName;
     private ArrayList<OpNode> nodes = new ArrayList<>();
     private ArrayList<Edge> edges = new ArrayList<>();
+    private final String opType;
 
-    public Operation(String name){
+    public Operation(String name, String opType){
         this.opName = name;
+        this.opType = opType;
+    }
 
+    public Operation(Operation that){
+        this(that.opName, that.getOpType());
+        this.nodes = that.getNodes();
+        this.edges = that.getEdges();
     }
 
     public void addEdge(Edge edge){
         edges.add(edge);
+    }
+
+    public Integer setNodeNums(Integer nodeIndex){
+        for (OpNode node: nodes) {
+            node.setNodeNum(nodeIndex);
+            nodeIndex++;
+        }
+
+        return nodeIndex;
     }
 
     public void addNode(OpNode node){
@@ -31,45 +46,6 @@ public class Operation {
         return nodes;
     }
 
-    public boolean validateEdges(){
-
-        for (Edge edge: edges) {
-            checkNodeExistence(edge.getToNode());
-            checkNodeExistence(edge.getFromNode());
-
-        }
-
-        return true;
-    }
-
-    private boolean checkNodeExistence(String nodeName){
-        for(OpNode node : nodes){
-            if(node.getNodeName().equals(nodeName)) return true;
-        }
-
-        System.out.println("invalid edge, node " + nodeName + " does not exist");
-        return false;
-    }
-
-    public OpNode getPortNode(int dockNum){
-        ArrayList<OpNode> portNodes = new ArrayList<>();
-        for (OpNode node: nodes) {
-            if(node.getPortNum() == dockNum ) return node;
-
-        }
-
-        return null;
-    }
-
-    public HashMap<Integer, OpNode> getDockNodes(){
-        HashMap<Integer, OpNode> dockMap = new HashMap<>();
-        for (OpNode node: nodes) {
-            if(node.getDockNum() != -1) dockMap.put(node.getDockNum(), node);
-        }
-
-        return dockMap;
-    }
-
     public ArrayList<OpNode> getDockNodes1(){
         ArrayList<OpNode> dockNodes = new ArrayList<>();
         for (OpNode node: nodes) {
@@ -77,24 +53,6 @@ public class Operation {
         }
 
         return dockNodes;
-    }
-
-    public ArrayList<OpNode> getDockNodes2(){
-        ArrayList<OpNode> dockNodes = new ArrayList<>();
-        for (OpNode node: nodes) {
-            if(node.getDockNum() != -1) dockNodes.add(node);
-        }
-
-        return dockNodes;
-    }
-
-    public HashMap<Integer, OpNode> getPortNodes(){
-        HashMap<Integer, OpNode> portMap = new HashMap<>();
-        for (OpNode node: nodes) {
-            if(node.getPortNum() != -1) portMap.put(node.getDockNum(), node);
-        }
-
-        return portMap;
     }
 
     public ArrayList<OpNode> getPortNodeArray(){
@@ -106,13 +64,7 @@ public class Operation {
         return portNodes;
     }
 
-    public HashMap<Integer, OpNode> getUndefPorts(){
-        HashMap<Integer, OpNode> UndefPorts = new HashMap<>();
-
-        for (OpNode node: nodes) {
-            if(node.isUndef() && node.hasPort()) UndefPorts.put(node.getPortNum(), node);
-        }
-
-        return UndefPorts;
+    public String getOpType() {
+        return opType;
     }
 }

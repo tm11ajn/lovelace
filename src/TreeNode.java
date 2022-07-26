@@ -1,6 +1,9 @@
+import java.util.ArrayList;
+
 public class TreeNode {
     private String label;
     private TreeNode parent = null;
+    private ArrayList<TreeNode> children = new ArrayList<>();
     private int depth = 0;
     private boolean hasChild = false;
 
@@ -20,16 +23,6 @@ public class TreeNode {
         return label;
     }
 
-    public void setDepth(int depth) {
-        this.depth = depth;
-    }
-
-    public int getDepth() {
-        return depth;
-    }
-
-
-
     public void hasChild(boolean hasChild) {
         this.hasChild = hasChild;
     }
@@ -40,5 +33,13 @@ public class TreeNode {
 
     public boolean isRoot(){
         return parent == null;
+    }
+
+    public void addChild(TreeNode child) {
+        this.children.add(child);
+    }
+
+    public ArrayList<TreeNode> getChildren() {
+        return children;
     }
 }

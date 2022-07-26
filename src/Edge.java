@@ -3,15 +3,6 @@ public class Edge {
     private OpNode toNode;
     private String label;
 
-    /*
-    public Edge(String[] edgeinfo){
-        this.fromNode = edgeinfo[0];
-        this.toNode = edgeinfo[2];
-        this.label = edgeinfo[3];
-    }
-
-     */
-
     public Edge(OpNode fromNode, OpNode toNode, String label){
         this.fromNode = fromNode;
         this.toNode = toNode;

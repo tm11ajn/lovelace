@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -22,50 +21,16 @@ public class OperationParser {
         this.operations = operationFile;
 
         try{
-            //ParseOperations();
             ParseOps();
             System.out.println("@@@@@@@PRINTING OPERATIONS");
             for (Entry<String, Operation> operation: operationHashMap.entrySet()) {
-                testPrintOperation1(operation.getValue());
+                testPrintOperation(operation.getValue());
             }
 
         }catch (FileNotFoundException e){
             System.out.println("cringe file");
         }
     }
-
-    /**
-     * Scanning the operation file and creating operations
-     * @throws FileNotFoundException
-     */
-    /*
-    private void ParseOperations() throws FileNotFoundException {
-        Scanner scanner = new Scanner(operations);
-        int mode = 0;
-        Operation operation = null;
-
-        while(scanner.hasNextLine()){
-            currentRow++;
-            String line = scanner.nextLine();
-
-            if(line.length() == 0) continue;
-
-            mode = SetMode(line, mode);
-            if(mode == OPERATION){
-                operation = createOperation(line);
-                operationHashMap.put(operation.getOpName(), operation);
-            }else if(mode == NODE){
-                if(!line.contains("nodes")) addValidNodesToOperation(operation, line);
-            }else if(mode == EDGE){
-                if(!line.contains("edge")) addValidEdgeToOperation(operation, line);
-            }else if(mode == UNION){
-                System.out.println("union");
-            }
-        }
-        scanner.close();
-    }
-
-     */
 
     private void ParseOps() throws FileNotFoundException{
         Scanner scanner = new Scanner(operations);
@@ -84,7 +49,7 @@ public class OperationParser {
 
             if(line.length() == 0) continue;
 
-            mode = SetMode1(line, mode);
+            mode = SetMode(line, mode);
             if(mode == OPERATION){
                 operation = createOperation(line);
                 operationHashMap.put(operation.getOpName(), operation);
@@ -120,28 +85,9 @@ public class OperationParser {
         scanner.close();
     }
 
-    /**
-     * Choose mode depending on which keyword the line contains
-     * @param line scanned line
-     * @param mode previous mode
-     * @return new mode
-     */
-    //TODO REMOVE WHEN DONE WITH BETTER
+
+
     private int SetMode(String line, int mode){
-        if(line.contains("OPERATION")){
-            mode = 1;
-        }else if(line.contains("nodes")){
-            mode = 2;
-        }else if(line.contains("edges")){
-            mode = 3;
-        }else if(line.contains("union")){
-            mode = 4;
-        }
-
-        return mode;
-    }
-
-    private int SetMode1(String line, int mode){
         if(line.contains("OPERATION")){
             mode = 1;
         }else if(line.contains("node")){
@@ -158,29 +104,9 @@ public class OperationParser {
 
         return mode;
     }
-    //TODO REMOVE WHEN NEW WORKS
+
+
     private void testPrintOperation(Operation operation){
-        System.out.println("Operation: " + operation.getOpName());
-
-        System.out.println("\tNODES:");
-        for (OpNode node: operation.getNodes()) {
-            System.out.println("\t\tNode name: " + node.getNodeName());
-            if(node.getDockNum() != -1){
-                System.out.println("\t\t\tDOCK number:" + node.getDockNum());
-            }
-            if(node.getPortNum() != -1){
-                System.out.println("\t\t\tPORT number:" + node.getPortNum());
-            }
-        }
-
-        System.out.println("\tEDGES:");
-        for (Edge edge : operation.getEdges()){
-            System.out.println("\t\tFrom node " + edge.getFromNode() + " to node " + edge.getToNode() + " with label " +
-                    edge.getLabel());
-        }
-    }
-
-    private void testPrintOperation1(Operation operation){
         System.out.println("Operation: " + operation.getOpName());
 
         System.out.println("\tNODES:");
@@ -194,9 +120,7 @@ public class OperationParser {
 
                 for(Dock dock : docks.values()){
                     System.out.print("\t\t\tDock number: " + dock.getDockNum() + " with args:");
-                    if(dock.getSingleArg() != null){
-                        System.out.println(" " + dock.getSingleArg());
-                    }else{
+                    if(dock.getArgs() != null){
                         for (String arg: dock.getArgs()) {
                             System.out.print(" " + arg);
                         }
@@ -240,18 +164,20 @@ public class OperationParser {
         }
     }
 
-    private void addValidNodesToOperation(Operation operation, String line){
-        String[] nodeInfo = trimAndSplit(line);
-        OpNode node = new OpNode(nodeInfo);
-        operation.addNode(node);
-    }
 
     private Operation createOperation(String line){
-        Operation operation;
+        Operation operation = null;
 
         line = line.trim();
-        String opName = line.split(" ")[1];
-        operation = new Operation(opName);
+        String[] opArgs = line.split(" ");
+        if(opArgs.length == 3){
+            operation = new Operation(opArgs[1], opArgs[2]);
+        }else{
+            System.out.println(line);
+            System.err.println("ERROR: incorrect number of argument in operation declaration");
+            System.exit(1);
+        }
+
         return operation;
     }
 
