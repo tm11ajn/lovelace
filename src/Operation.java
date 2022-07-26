@@ -14,7 +14,9 @@ public class Operation {
 
     public Operation(Operation that){
         this(that.opName, that.getOpType());
-        this.nodes = that.getNodes();
+        for (OpNode node: that.getNodes()) {
+            this.nodes.add(node.clone());
+        }
         this.edges = that.getEdges();
     }
 

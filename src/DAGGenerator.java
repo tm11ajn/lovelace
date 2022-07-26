@@ -23,19 +23,21 @@ public class DAGGenerator {
         for (TreeNode operationNode: treeNodes) {
             if(operationHashMap.containsKey(operationNode.getLabel())){
                 operation = operationHashMap.get(operationNode.getLabel());
+                /*
+                if(operation.getUsed()){
+                    operation = new Operation(operation);
+                    nodeNumber = operation.setNodeNums(nodeNumber);
+                }else {
+                    operation.setUsed(true);
+                }
+
+                 */
 
                 if(operationNode.getParent() != null){
                     if(operation.getOpType().equals("U")){
                         for(TreeNode child : operationNode.getChildren()){
                             if(operationHashMap.containsKey(child.getLabel())){
                                 childOp = operationHashMap.get(child.getLabel());
-                                if(childOp.getUsed()){
-                                    childOp = new Operation(childOp);
-                                    nodeNumber = childOp.setNodeNums(nodeNumber);
-                                }else {
-                                    childOp.setUsed(true);
-                                }
-
                                 childPorts.addAll(childOp.getPortNodeArray());
                             }
                         }
@@ -50,13 +52,22 @@ public class DAGGenerator {
             }
         }
         matchDockWithPort(portHashMap);
+        for (Operation op: operationHashMap.values()) {
+            op.setUsed(false);
+
+        }
         DAGEdges.clear();
     }
 
     private void matchPortsWithParent(HashMap<String, ArrayList<OpNode>> portHashMap, TreeNode operationNode, Operation operation){
-        System.out.print("Operation:  " + operationHashMap.get(operationNode.getParent().getLabel()).getOpName()  + " with port nodes:");
+        if(operation.getUsed()){
+            operation = new Operation(operation);
+            nodeNumber = operation.setNodeNums(nodeNumber);
+        }else {
+            operation.setUsed(true);
+        }
+
         for (OpNode portNode: operation.getPortNodeArray()) {
-            System.out.print(" " + portNode.getNodeName() + "(" + portNode.getNodeNum() +")");
             if(portHashMap.containsKey(operationNode.getParent().getLabel())){
                 portHashMap.get(operationNode.getParent().getLabel()).add(portNode);
             }else {
@@ -65,12 +76,10 @@ public class DAGGenerator {
                 portHashMap.put(operationNode.getParent().getLabel(), portNodes);
             }
         }
-        System.out.print("\n");
     }
 
     private void matchDockWithPort(HashMap<String, ArrayList<OpNode>> portHashMap){
         OpNode fromNode;
-        OpNode toNode;
         Operation currentOperation;
         String operationName;
         ArrayList<OpNode> portNodes;

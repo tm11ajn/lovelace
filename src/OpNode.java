@@ -64,5 +64,14 @@ public class OpNode {
     public void increasePortNum(){
         this.portNum++;
     }
+
+    public OpNode clone(){
+        OpNode cpy = new OpNode(this.nodeName, this.nodeNum);
+        cpy.undef = this.undef;
+        cpy.docks = this.docks;
+        cpy.portNum = this.portNum;
+
+        return cpy;
+    }
 }
 
