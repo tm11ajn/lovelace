@@ -1,11 +1,8 @@
 public class Dock {
     private int dockNum;
     private String[] args;
-    private String singleArg = null;
 
     public Dock(String[] args){
-
-
         if(args.length >= 2){
             this.dockNum = Integer.parseInt(args[0]);
             this.args = new String[args.length -1];
@@ -22,9 +19,5 @@ public class Dock {
 
     public String[] getArgs() {
         return args;
-    }
-
-    public String getSingleArg() {
-        return singleArg;
     }
 }

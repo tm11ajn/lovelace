@@ -5,7 +5,6 @@ public class DAGGenerator {
     private ArrayList<TreeNode> treeNodes;
     private HashMap<String, Operation> operationHashMap;
     private ArrayList<Edge> DAGEdges = new ArrayList<>();
-    private LinkedList<OpNode> portNodesFromPrevOperationQueue = new LinkedList<>();
     private int nodeNumber = 1000;
 
     public DAGGenerator(HashMap<String, Operation> operationHashMap){
@@ -100,7 +99,6 @@ public class DAGGenerator {
         for (Edge edge: DAGEdges) {
             System.out.println(edge.getFromNode().getNodeName() + "(" + edge.getFromNode().getNodeNum()+ ")" + " -> "
                     + edge.getToNode().getNodeName()+ "(" + edge.getToNode().getNodeNum()+ ")" + " with arg: " + edge.getLabel());
-
         }
     }
 
@@ -118,7 +116,7 @@ public class DAGGenerator {
     private void generateEdges( Operation currentOperation, TreeNode node, HashMap<String, ArrayList<OpNode>> portHashMap){
 
         ArrayList<OpNode> portNodes = portHashMap.get(currentOperation.getOpName());
-        ArrayList<OpNode> parentDockNodes = currentOperation.getDockNodes1();
+        ArrayList<OpNode> parentDockNodes = currentOperation.getDockNodes();
         OpNode fromNode;
 
         for (OpNode portNode: portNodes) {

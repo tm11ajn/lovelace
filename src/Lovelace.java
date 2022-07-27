@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -20,24 +19,8 @@ public class Lovelace {
         HashMap<String, Operation> operationHashMap = opPars.getOperationHashMap();
         DAGGenerator generator = new DAGGenerator(operationHashMap);
         TreeParser treeParser = new TreeParser();
-        /*
-        try {
-            Scanner treeScan = new Scanner(treeFile);
-            String currentTree = treeScan.nextLine();
-            treeParser.parseLine(currentTree);
-            ArrayList<TreeNode> treeNodes = treeParser.getTreeNodes();
-            for (TreeNode node: treeNodes) {
-                System.out.println(node.getLabel());
-                HashMap<String, Operation> usedOperations = new HashMap<>();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-         */
 
         int DAGNum = 1;
-
 
         System.out.println("THIS IS AFTER PARSING THE OPERATIONS:");
         try {
@@ -61,7 +44,6 @@ public class Lovelace {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
 
         System.exit(0);
     }

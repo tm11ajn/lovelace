@@ -18,6 +18,7 @@ public class Operation {
             this.nodes.add(node.clone());
         }
         this.edges = that.getEdges();
+        this.isUsed = false;
     }
 
     public void addEdge(Edge edge){
@@ -49,7 +50,7 @@ public class Operation {
         return nodes;
     }
 
-    public ArrayList<OpNode> getDockNodes1(){
+    public ArrayList<OpNode> getDockNodes(){
         ArrayList<OpNode> dockNodes = new ArrayList<>();
         for (OpNode node: nodes) {
             if(node.isDockNode()) dockNodes.add(node);

@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class OperationParser {
 
-    private File operations;
+    private final File operations;
     private HashMap<String, Operation> operationHashMap = new HashMap<>();
 
     private static final int OPERATION = 1;
@@ -60,7 +60,6 @@ public class OperationParser {
                 currentOperationNodes.put(currentOpNode.getNodeName(), currentOpNode);
                 operation.addNode(currentOpNode);
                 nodeNum++;
-                //if(!line.contains("nodes")) addValidNodesToOperation(operation, line);
             }else if(mode == EDGE){
                 if(!line.contains("edge")) addValidEdgeToOperation(operation, line, currentOperationNodes);
             }else if(mode == UNION){
@@ -73,7 +72,6 @@ public class OperationParser {
                         currentOpNode.addDock(dock.getDockNum(), dock);
                     }
                 }
-
             }else if(mode == PORT){
                 portStrings = trimAndSplit(line);
 
@@ -84,8 +82,6 @@ public class OperationParser {
         }
         scanner.close();
     }
-
-
 
     private int SetMode(String line, int mode){
         if(line.contains("OPERATION")){
@@ -104,7 +100,6 @@ public class OperationParser {
 
         return mode;
     }
-
 
     private void testPrintOperation(Operation operation){
         System.out.println("Operation: " + operation.getOpName());
@@ -203,7 +198,6 @@ public class OperationParser {
         System.exit(1);
 
     }
-
 
     public HashMap<String, Operation> getOperationHashMap() {
         return operationHashMap;
