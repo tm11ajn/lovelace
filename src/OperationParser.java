@@ -50,40 +50,54 @@ public class OperationParser {
             if(line.length() == 0) continue;
 
             mode = SetMode(line, mode);
-            if(mode == OPERATION){
-                operation = createOperation(line);
-                operationHashMap.put(operation.getOpName(), operation);
-                currentOperationNodes.clear();
-            }else if(mode == NODE){
-                nodeStrings = trimAndSplit(line);
-                currentOpNode = new OpNode(nodeStrings[1], nodeNum);
-                currentOperationNodes.put(currentOpNode.getNodeName(), currentOpNode);
-                operation.addNode(currentOpNode);
-                nodeNum++;
-            }else if(mode == EDGE){
-                if(!line.contains("edge")) addValidEdgeToOperation(operation, line, currentOperationNodes);
-            }else if(mode == UNION){
-                System.out.println("union");
-            }else if(mode == DOCK){
-                if(!line.contains("DOCK")){
-                    dockStrings = trimAndSplit(line);
-                    Dock dock = new Dock(dockStrings);
-                    if(currentOpNode != null){
-                        currentOpNode.addDock(dock.getDockNum(), dock);
-                    }
-                }
-            }else if(mode == PORT){
-                portStrings = trimAndSplit(line);
 
-                if(currentOpNode != null){
-                    currentOpNode.setPortNum(portStrings[1]);
-                }
+            switch(mode){
+                case OPERATION:
+                    operation = createOperation(line);
+                    operationHashMap.put(operation.getOpName(), operation);
+                    currentOperationNodes.clear();
+                    break;
+
+                case NODE:
+                    nodeStrings = trimAndSplit(line);
+                    currentOpNode = new OpNode(nodeStrings[1], nodeNum);
+                    currentOperationNodes.put(currentOpNode.getNodeName(), currentOpNode);
+                    operation.addNode(currentOpNode);
+                    nodeNum++;
+                    break;
+                case EDGE:
+                    if(!line.contains("edge")) addValidEdgeToOperation(operation, line, currentOperationNodes);
+                    break;
+                case UNION:
+                    System.out.println("union");
+                    break;
+                case DOCK:
+                    if(!line.contains("DOCK")){
+                        addDocks(line, currentOpNode);
+                    }
+                    break;
+                case PORT:
+                    portStrings = trimAndSplit(line);
+
+                    if(currentOpNode != null){
+                        currentOpNode.setPortNum(portStrings[1]);
+                    }
+                    break;
             }
         }
         scanner.close();
     }
 
+    private void addDocks(String line, OpNode currentOpNode){
+        String[] dockStrings = trimAndSplit(line);
+        Dock dock = new Dock(dockStrings);
+        if(currentOpNode != null){
+            currentOpNode.addDock(dock.getDockNum(), dock);
+        }
+    }
+
     private int SetMode(String line, int mode){
+
         if(line.contains("OPERATION")){
             mode = 1;
         }else if(line.contains("node")){

@@ -36,7 +36,8 @@ public class Lovelace {
 
                 System.out.println("DAG number: " + DAGNum);
                 DAGNum++;
-                generator.getPortFromChild(treeNodes);
+                //generator.getPortFromChild(treeNodes);
+                generator.temp(treeNodes);
                 treeNodes.clear();
             }
             scan.close();
