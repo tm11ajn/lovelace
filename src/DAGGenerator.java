@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.*;
 
 public class DAGGenerator {
@@ -108,8 +109,10 @@ public class DAGGenerator {
     private void handleUnion(Operation currentOperation, ArrayList<OpNode> ports){
         if(currentOperation.getOpType().equals("U")){
             for(int i = 0 ; i < ports.size()-1 ; i++){
-                if(ports.get(i).getPortNum() == ports.get(i+1).getPortNum()){
-                    ports.get(i+1).increasePortNum();
+                for (int j = i+1; j < ports.size(); j++) {
+                    if(ports.get(i).getPortNum() == ports.get(j).getPortNum()){
+                        ports.get(j).increasePortNum();
+                    }
                 }
             }
         }
@@ -236,11 +239,8 @@ public class DAGGenerator {
 
                 if(node.getParent() != null){
 
-                    //matchPortsWithParent(portHashMap, node, operation);
                     operation = copyOperationIfUsed(operation);
-
                     parentLabel = node.getParent().getLabel();
-
                     if(operation.getOpType().equals("U")){
 
                         for(TreeNode child : node.getChildren()){
@@ -253,51 +253,17 @@ public class DAGGenerator {
                     }else {
                         childPorts = operation.getPortNodeArray();
                     }
-                    //childPorts = operation.getPortNodeArray();
 
-                    //TODO MATCH PORTS WITH DOCKS
                     DAGEdges.addAll(operation.getEdges());
-
                     handleUnion(operation, childPorts);
                     generateEdges2(parentLabel, childPorts);
-                    /*
-                    for (OpNode portNode: operation.getPortNodeArray()) {
-                        if(portHashMap.containsKey(node.getParent().getLabel())){
-                            portHashMap.get(node.getParent().getLabel()).add(portNode);
-                        }else {
-                            ArrayList<OpNode> portNodes = new ArrayList<>();
-                            portNodes.add(portNode);
-                            portHashMap.put(node.getParent().getLabel(), portNodes);
-                        }
-                    }
-
-                     */
-
-
+                }else {
+                    DAGEdges.addAll(operation.getEdges());
                 }
 
             }
+            childPorts.clear();
         }
-
-
-        //TODO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        /*
-        Operation currentOperation;
-
-        for (TreeNode node : treeNodes) {
-            if(operationHashMap.containsKey(node.getLabel()) && portHashMap.containsKey(node.getLabel())){
-
-                operationName = node.getLabel();
-                currentOperation = operationHashMap.get(operationName);
-                DAGEdges.addAll(currentOperation.getEdges());
-
-                handleUnion(currentOperation, portHashMap);
-                generateEdges(currentOperation, node, portHashMap);
-            }
-        }
-
-         */
-
         printEdges();
         resetUsageOfOperations();
         DAGEdges.clear();
