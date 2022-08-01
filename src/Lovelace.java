@@ -11,6 +11,7 @@ public class Lovelace {
         inputCheck inputChecker = new inputCheck(args);
         inputChecker.runNumArgCheck();
         Scanner scan;
+        ArrayList<Edge> DAGEdges;
         File treeFile = inputChecker.CheckForValidFile(args[0]);
         File grammarFile = inputChecker.CheckForValidFile(args[1]);
 
@@ -19,8 +20,12 @@ public class Lovelace {
         HashMap<String, Operation> operationHashMap = opPars.getOperationHashMap();
         DAGGenerator generator = new DAGGenerator(operationHashMap);
         TreeParser treeParser = new TreeParser();
+        GraphvizFileBuilder graphBuild = new GraphvizFileBuilder();
+        File theDir = graphBuild.createDAGDirectory();
 
         int DAGNum = 1;
+
+
 
         System.out.println("THIS IS AFTER PARSING THE OPERATIONS:");
         try {
@@ -30,15 +35,15 @@ public class Lovelace {
             while(scan.hasNextLine()){
 
                 currentTree = scan.nextLine();
-
                 treeParser.parseLine(currentTree);
                 treeNodes = treeParser.getTreeNodes();
 
                 System.out.println("DAG number: " + DAGNum);
-                DAGNum++;
                 //generator.getPortFromChild(treeNodes);
-                generator.temp(treeNodes);
+                DAGEdges = generator.temp(treeNodes);
+                graphBuild.createDAGFile(DAGEdges, DAGNum);
                 treeNodes.clear();
+                DAGNum++;
             }
             scan.close();
 

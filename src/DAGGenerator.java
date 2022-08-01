@@ -1,4 +1,3 @@
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class DAGGenerator {
@@ -13,6 +12,7 @@ public class DAGGenerator {
 
     }
 
+    //TODO OLD IMPLEMENTATION REMOVE
     public void getPortFromChild(ArrayList<TreeNode> treeNodes){
         this.treeNodes = treeNodes;
         for (TreeNode node: treeNodes) {
@@ -90,8 +90,8 @@ public class DAGGenerator {
                 DAGEdges.addAll(currentOperation.getEdges());
 
                 ArrayList<OpNode> ports = portHashMap.get(currentOperation.getOpName());
-                handleUnion(currentOperation, ports);
-                generateEdges(currentOperation, node, portHashMap);
+                handlePortsUnion(currentOperation, ports);
+                generateEdges2(currentOperation, node, portHashMap);
             }
         }
 
@@ -106,19 +106,24 @@ public class DAGGenerator {
         }
     }
 
-    private void handleUnion(Operation currentOperation, ArrayList<OpNode> ports){
-        if(currentOperation.getOpType().equals("U")){
-            for(int i = 0 ; i < ports.size()-1 ; i++){
-                for (int j = i+1; j < ports.size(); j++) {
-                    if(ports.get(i).getPortNum() == ports.get(j).getPortNum()){
-                        ports.get(j).increasePortNum();
-                    }
+    private void handlePortsUnion(Operation currentOperation, ArrayList<OpNode> ports){
+        for(int i = 0 ; i < ports.size()-1 ; i++){
+            for (int j = i+1; j < ports.size(); j++) {
+                if(ports.get(i).getPortNum() == ports.get(j).getPortNum()){
+                    ports.get(j).increasePortNum();
                 }
             }
         }
+
+        if(currentOperation.getOpName().equals("u'")){
+            String temp = String.valueOf(ports.get(1).getPortNum());
+            ports.get(1).setPortNum(String.valueOf(ports.get(2).getPortNum()));
+            ports.get(2).setPortNum(temp);
+        }
+
     }
 
-    private void generateEdges( Operation currentOperation, TreeNode node, HashMap<String, ArrayList<OpNode>> portHashMap){
+    private void generateEdges2(Operation currentOperation, TreeNode node, HashMap<String, ArrayList<OpNode>> portHashMap){
 
         ArrayList<OpNode> portNodes = portHashMap.get(currentOperation.getOpName());
         ArrayList<OpNode> parentDockNodes = currentOperation.getDockNodes();
@@ -140,13 +145,13 @@ public class DAGGenerator {
         }
     }
 
-    private void generateEdges2(String parentLabel, ArrayList<OpNode> childPorts){
+    private void generateEdges(String parentLabel, ArrayList<OpNode> childPorts){
         Operation parentOp = operationHashMap.get(parentLabel);
         ArrayList<OpNode> dockNodes = parentOp.getDockNodes();
         ArrayList<OpNode> parentPortNodes = parentOp.getPortNodeArray();
         OpNode fromNode;
 
-        for (OpNode portNode: childPorts){
+        for (OpNode portNode : childPorts){
             for(OpNode parentDockNode : dockNodes){
                 fromNode = parentDockNode;
                 if(parentDockNode.getDocks().get(portNode.getPortNum()).getArgs() != null){
@@ -155,6 +160,7 @@ public class DAGGenerator {
                         setUndefinedNode(portNode, parentPortNodes);
                     }
                 }
+
             }
         }
 
@@ -170,62 +176,9 @@ public class DAGGenerator {
         }
     }
 
-    public void combineBoth(ArrayList<TreeNode> treeNodes){
+    public ArrayList<Edge> temp(ArrayList<TreeNode> treeNodes){
         this.treeNodes = treeNodes;
-        Operation operation;
-        Operation childOp;
-        ArrayList<OpNode> childPorts = new ArrayList<>();
-        HashMap<String, ArrayList<OpNode>> portHashMap = new HashMap<>();
-
-        for (TreeNode operationNode: treeNodes) {
-            if(operationHashMap.containsKey(operationNode.getLabel())){
-                operation = operationHashMap.get(operationNode.getLabel());
-
-                if(operationNode.getParent() != null){
-                    if(operation.getOpType().equals("U")){
-                        for(TreeNode child : operationNode.getChildren()){
-                            if(operationHashMap.containsKey(child.getLabel())){
-                                childOp = operationHashMap.get(child.getLabel());
-                                childPorts.addAll(childOp.getPortNodeArray());
-                            }
-                        }
-                        if(!childPorts.isEmpty()){
-                            portHashMap.put(operationNode.getParent().getLabel(), childPorts);
-                        }
-                    }
-                    matchPortsWithParent(portHashMap, operationNode, operation);
-                }
-            }
-        }
-
-        //MATCH PORT START
-        Operation currentOperation;
-        String operationName;
-
-        /*
-        for (TreeNode node : treeNodes) {
-            if(operationHashMap.containsKey(node.getLabel()) && portHashMap.containsKey(node.getLabel())){
-
-                operationName = node.getLabel();
-                currentOperation = operationHashMap.get(operationName);
-                DAGEdges.addAll(currentOperation.getEdges());
-
-                handleUnion(currentOperation, portHashMap);
-                generateEdges(currentOperation, node, portHashMap);
-            }
-        }
-
-
-         */
-        printEdges();
-        //END
-
-        resetUsageOfOperations();
         DAGEdges.clear();
-    }
-
-    public void temp(ArrayList<TreeNode> treeNodes){
-        this.treeNodes = treeNodes;
         Operation operation;
 
         String parentLabel;
@@ -255,9 +208,15 @@ public class DAGGenerator {
                     }
 
                     DAGEdges.addAll(operation.getEdges());
-                    handleUnion(operation, childPorts);
-                    generateEdges2(parentLabel, childPorts);
+                    if(operation.getOpType().equals("U")) {
+                        handlePortsUnion(operation, childPorts);
+                    }
+                    generateEdges(parentLabel, childPorts);
                 }else {
+                    System.out.println("OPERATION: " + operation.getOpName() + " WITH PORTS: ");
+                    for (OpNode pNode: operation.getPortNodeArray()) {
+                        System.out.println(pNode.getNodeName());
+                    }
                     DAGEdges.addAll(operation.getEdges());
                 }
 
@@ -266,6 +225,7 @@ public class DAGGenerator {
         }
         printEdges();
         resetUsageOfOperations();
-        DAGEdges.clear();
+
+        return DAGEdges;
     }
 }

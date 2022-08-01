@@ -40,7 +40,6 @@ public class OperationParser {
         OpNode currentOpNode = null;
         HashMap<String, OpNode> currentOperationNodes = new HashMap<>();
         String[] portStrings;
-        String[] dockStrings;
         String[] nodeStrings;
 
         while(scanner.hasNextLine()){
