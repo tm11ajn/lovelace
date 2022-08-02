@@ -1,2 +1,3 @@
 trys(persuadec(zc3(sx)))
 persuadess(u'(s'x zc3(sx)))
+trys(zc4(u(s'x sx)))

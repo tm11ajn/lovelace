@@ -7,10 +7,19 @@ public class Operation {
     private final String opType;
     private Boolean isUsed = false;
     private int[] unionPortNumbers;
+    private ArrayList<UnionInfo> unionInfos = new ArrayList<>();
 
     public Operation(String name, String opType){
         this.opName = name;
         this.opType = opType;
+    }
+
+    public void addUnionInfo(UnionInfo uInfo){
+        unionInfos.add(uInfo);
+    }
+
+    public ArrayList<UnionInfo> getUnionInfos() {
+        return unionInfos;
     }
 
     public void setUnionPortNumbers(int lPorts, int rPorts) {

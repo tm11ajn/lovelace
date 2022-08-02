@@ -70,10 +70,13 @@ public class OperationParser {
                     break;
                 case UNION:
                     if(!line.contains("union")){
-                        unionInfo = line.split(" ");
-                        UnionInfo info = new UnionInfo(unionInfo);
+                        System.out.println("inside union");
+                        unionInfo = line.trim().split(" ");
+                        if(unionInfo.length > 0){
+                            UnionInfo uInfo = new UnionInfo(unionInfo);
+                            operation.addUnionInfo(uInfo);
+                        }
                     }
-                    System.out.println("union");
                     break;
                 case DOCK:
                     if(!line.contains("DOCK")){
