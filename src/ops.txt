@@ -180,8 +180,11 @@ OPERATION: persuadecc C
 
 	edges:
 
-OPERATION: u U
+OPERATION: u U 1u1
+    left 1
+    right 2
 
 
-
-OPERATION: u' U
+OPERATION: u' U 1u2
+    left 1
+    right 2 3

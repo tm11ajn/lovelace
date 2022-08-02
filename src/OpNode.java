@@ -47,9 +47,7 @@ public class OpNode {
     }
 
     public boolean isDockNode(){
-        if(!docks.isEmpty()) return true;
-
-        return false;
+        return !docks.isEmpty();
     }
 
     public int getNodeNum() {

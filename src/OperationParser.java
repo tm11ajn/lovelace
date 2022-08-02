@@ -41,6 +41,7 @@ public class OperationParser {
         HashMap<String, OpNode> currentOperationNodes = new HashMap<>();
         String[] portStrings;
         String[] nodeStrings;
+        String[] unionInfo;
 
         while(scanner.hasNextLine()){
             currentRow++;
@@ -68,6 +69,10 @@ public class OperationParser {
                     if(!line.contains("edge")) addValidEdgeToOperation(operation, line, currentOperationNodes);
                     break;
                 case UNION:
+                    if(!line.contains("union")){
+                        unionInfo = line.split(" ");
+                        UnionInfo info = new UnionInfo(unionInfo);
+                    }
                     System.out.println("union");
                     break;
                 case DOCK:

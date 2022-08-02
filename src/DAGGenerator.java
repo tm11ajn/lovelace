@@ -183,6 +183,7 @@ public class DAGGenerator {
 
         String parentLabel;
         ArrayList<OpNode> childPorts = new ArrayList<>();
+        int[] numOfPortsUnion = new int[2];
 
         Operation childOp;
 
@@ -195,6 +196,7 @@ public class DAGGenerator {
                     operation = copyOperationIfUsed(operation);
                     parentLabel = node.getParent().getLabel();
                     if(operation.getOpType().equals("U")){
+                        numOfPortsUnion = operation.getUnionPortNumbers();
 
                         for(TreeNode child : node.getChildren()){
                             if(operationHashMap.containsKey(child.getLabel())){

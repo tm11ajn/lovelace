@@ -6,10 +6,21 @@ public class Operation {
     private ArrayList<Edge> edges = new ArrayList<>();
     private final String opType;
     private Boolean isUsed = false;
+    private int[] unionPortNumbers;
 
     public Operation(String name, String opType){
         this.opName = name;
         this.opType = opType;
+    }
+
+    public void setUnionPortNumbers(int lPorts, int rPorts) {
+        unionPortNumbers = new int[2];
+        unionPortNumbers[0] = lPorts;
+        unionPortNumbers[1] = rPorts;
+    }
+
+    public int[] getUnionPortNumbers() {
+        return unionPortNumbers;
     }
 
     public Operation(Operation that){
