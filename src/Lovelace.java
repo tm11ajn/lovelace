@@ -41,7 +41,7 @@ public class Lovelace {
                 System.out.println("DAG number: " + DAGNum);
                 //generator.getPortFromChild(treeNodes);
                 DAGEdges = generator.temp(treeNodes);
-                graphBuild.createDAGFile(DAGEdges, DAGNum);
+                graphBuild.createDAGFile(DAGEdges, DAGNum, currentTree);
                 treeNodes.clear();
                 DAGNum++;
             }
