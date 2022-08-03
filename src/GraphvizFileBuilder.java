@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class GraphvizFileBuilder {
@@ -32,17 +34,23 @@ public class GraphvizFileBuilder {
         return theDir;
     }
 
-    public void createDAGFile(ArrayList<Edge> edges, int DAGNum, String currentTree){
+    public void createDAGFile(ArrayList<Edge> edges, int DAGNum, String currentTree) throws IOException {
 
         File file = new File(theDir, currentTree + ".txt");
+
 
         try(FileOutputStream fileStream = new FileOutputStream(file);
             DataOutputStream data0 = new DataOutputStream(fileStream)) {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+        FileWriter writer = new FileWriter(file);
+        initGraphFile(writer);
+        writeEdgesToFile(writer, edges);
+        writeNodesToFile(writer, edges);
+        writer.write("}");
+        writer.close();
     }
 
     private void deleteDAGDir(File file){
@@ -54,6 +62,34 @@ public class GraphvizFileBuilder {
                 }else{
                     delFile.delete();
                 }
+            }
+        }
+    }
+
+    private void initGraphFile(Writer writer) throws IOException {
+        writer.write("digraph G  {\n");
+    }
+
+    private void writeEdgesToFile(Writer writer, ArrayList<Edge> edges) throws IOException {
+        for (Edge edge: edges) {
+            writer.write("\t" + edge.getFromNode().getNodeNum() + " -> " + edge.getToNode().getNodeNum());
+            writer.write(" [label=\"" + edge.getLabel() +"\"]\n");
+        }
+        writer.write("\n");
+
+    }
+
+    private void writeNodesToFile(Writer writer, ArrayList<Edge> edges) throws IOException {
+        Set<Integer> usedNodeNums = new HashSet<>();
+        for (Edge edge : edges){
+            if(!usedNodeNums.contains(edge.getFromNode().getNodeNum())){
+                writer.write("\t" + edge.getFromNode().getNodeNum() + " [label=\"" + edge.getFromNode().getNodeName() +"\"" + "]\n");
+                usedNodeNums.add(edge.getFromNode().getNodeNum());
+            }
+
+            if(!usedNodeNums.contains(edge.getToNode().getNodeNum())){
+                writer.write("\t" + edge.getToNode().getNodeNum() + " [label=\"" + edge.getToNode().getNodeName() +"\"" + "]\n");
+                usedNodeNums.add(edge.getToNode().getNodeNum());
             }
         }
     }

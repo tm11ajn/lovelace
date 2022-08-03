@@ -1,5 +1,5 @@
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -21,7 +21,7 @@ public class Lovelace {
         DAGGenerator generator = new DAGGenerator(operationHashMap);
         TreeParser treeParser = new TreeParser();
         GraphvizFileBuilder graphBuild = new GraphvizFileBuilder();
-        File theDir = graphBuild.createDAGDirectory();
+        graphBuild.createDAGDirectory();
 
         int DAGNum = 1;
 
@@ -39,7 +39,6 @@ public class Lovelace {
                 treeNodes = treeParser.getTreeNodes();
 
                 System.out.println("DAG number: " + DAGNum);
-                //generator.getPortFromChild(treeNodes);
                 DAGEdges = generator.temp(treeNodes);
                 graphBuild.createDAGFile(DAGEdges, DAGNum, currentTree);
                 treeNodes.clear();
@@ -47,7 +46,7 @@ public class Lovelace {
             }
             scan.close();
 
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
