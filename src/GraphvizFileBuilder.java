@@ -5,15 +5,14 @@ import java.util.Set;
 
 
 public class GraphvizFileBuilder {
-    private File theDir;
-    private String dirPath;
+    private final File theDir;
+
     public GraphvizFileBuilder(){
-        this.dirPath = System.getProperty("user.dir") + "/DAGS";
+        String dirPath = System.getProperty("user.dir") + "/DAGS";
         this.theDir = new File(dirPath);
     }
 
-    public File createDAGDirectory(){
-
+    public void createDAGDirectory(){
 
         if(theDir.exists()){
 
@@ -30,14 +29,10 @@ public class GraphvizFileBuilder {
             System.err.println("UNABLE TO CREATE DIRECTORY");
             System.exit(1);
         }
-
-        return theDir;
     }
 
-    public void createDAGFile(ArrayList<Edge> edges, int DAGNum, String currentTree) throws IOException {
-
+    public void createDAGFile(ArrayList<Edge> edges, String currentTree) throws IOException {
         File file = new File(theDir, currentTree + ".txt");
-
 
         try(FileOutputStream fileStream = new FileOutputStream(file);
             DataOutputStream data0 = new DataOutputStream(fileStream)) {

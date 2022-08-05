@@ -138,7 +138,6 @@ OPERATION: zc4 C
 
 	node: undef
 	    PORT: 1
-
 	edges:
 
 OPERATION: tryc C
