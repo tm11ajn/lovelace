@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import org.apache.commons.cli.CommandLine;
+
 /**
  * This program is used to convert multiple directed trees into directed acyclic graphs (DAG).
  * It is done by applying a graph extension grammar on the directed trees which combine and
