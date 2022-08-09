@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  * This program is used to convert multiple directed trees into directed acyclic graphs (DAG).
@@ -15,15 +21,67 @@ import org.apache.commons.cli.CommandLine;
 
 public class Lovelace {
 
+    private static final String TREE_FILE = "t";
+    private static final String TREE_FILE_LONG = "trees";
+
+    private static final String GRAMMAR_FILE = "g";
+    private static final String GRAMMAR_FILE_LONG = "grammar";
+
+    private static final String START_TREE_SIZE_INTERVAL = "L";
+    private static final String END_TREE_SIZE_INTERVAL = "H";
+
+    private static final String KEY_NODE_IN_TREE = "k";
+    private static final String KEY_NODE_IN_TREE_LONG = "key";
+
     public static void main(String[] args) {
+        
         Scanner scan;
         ArrayList<Edge> DAGEdges;
+        int floor = 0;
+        int roof;
+        String treeFileName = "";
+        String grammarFileName = "";
+        String keyNode;
 
-        inputCheck inputChecker = new inputCheck(args);
-        inputChecker.runNumArgCheck();
+        Options options = generateOptions();
+        CommandLineParser cmdParser = new DefaultParser();
 
-        File treeFile = inputChecker.CheckForValidFile(args[0]);
-        File grammarFile = inputChecker.CheckForValidFile(args[1]);
+
+
+        try{
+            CommandLine commandLine = cmdParser.parse(options, args);
+            treeFileName = commandLine.getOptionValue(TREE_FILE);
+            grammarFileName = commandLine.getOptionValue(GRAMMAR_FILE);
+
+            if(commandLine.hasOption(START_TREE_SIZE_INTERVAL)){
+                floor = Integer.parseInt(commandLine.getOptionValue(START_TREE_SIZE_INTERVAL));
+                if(floor < 0){
+                    throw new NumberFormatException();
+                }
+            }
+            if(commandLine.hasOption(END_TREE_SIZE_INTERVAL)){
+                roof = Integer.parseInt(commandLine.getOptionValue(END_TREE_SIZE_INTERVAL));
+                if(roof < floor){
+                    throw new NumberFormatException();
+                }
+            }
+
+            if(commandLine.hasOption(KEY_NODE_IN_TREE)){
+                keyNode = commandLine.getOptionValue(KEY_NODE_IN_TREE);
+            }
+
+        }catch (NumberFormatException e){
+            System.err.println("The lower limit is below 0 or the upper limit is below the lower limit");
+            System.exit(1);
+        }catch(ParseException e){
+
+        }
+
+
+
+        inputCheck inputChecker = new inputCheck();
+        File treeFile = inputChecker.CheckForValidFile(treeFileName);
+        File grammarFile = inputChecker.CheckForValidFile(grammarFileName);
 
         OperationParser opPars = new OperationParser(grammarFile);
         HashMap<String, Operation> operationHashMap = opPars.getOperationHashMap();
@@ -84,5 +142,40 @@ public class Lovelace {
                     ". The tree is missing " + balanced + "x '('.");
         }
         return balanced == 0;
+    }
+
+    private static Options generateOptions(){
+        Options options = new Options();
+        Option lowLimitOpt = new Option(START_TREE_SIZE_INTERVAL,true,
+                "lower limit of tree size");
+        Option highLimitOpt = new Option(END_TREE_SIZE_INTERVAL, true,
+                "High limit of tree size");
+        Option keyNodeOpt = new Option(KEY_NODE_IN_TREE,KEY_NODE_IN_TREE_LONG, true,
+                "A specific node that all generated DAGS must have");
+        Option treeOpt = new Option(TREE_FILE, TREE_FILE_LONG, true,
+                "The tree file which is used to generate DAGS");
+        Option grammarOpt = new Option(GRAMMAR_FILE, GRAMMAR_FILE_LONG, true,
+                "The file which is used to interpret the trees and make them into DAGS");
+
+        lowLimitOpt.setArgName("Low limit");
+        highLimitOpt.setArgName("High limit");
+        keyNodeOpt.setArgName("key node");
+        treeOpt.setArgName("tree file");
+        grammarOpt.setArgName("grammar file");
+
+        treeOpt.setRequired(true);
+        grammarOpt.setRequired(true);
+        keyNodeOpt.setRequired(false);
+        lowLimitOpt.setRequired(false);
+        highLimitOpt.setRequired(false);
+
+        options.addOption(lowLimitOpt);
+        options.addOption(highLimitOpt);
+        options.addOption(keyNodeOpt);
+        options.addOption(treeOpt);
+        options.addOption(grammarOpt);
+
+
+        return options;
     }
 }
