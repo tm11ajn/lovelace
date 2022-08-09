@@ -41,7 +41,7 @@ public class Lovelace {
         int roof;
         String treeFileName = "";
         String grammarFileName = "";
-        String keyNode;
+        String keyNode = "";
 
         Options options = generateOptions();
         CommandLineParser cmdParser = new DefaultParser();
@@ -100,7 +100,7 @@ public class Lovelace {
             while(scan.hasNextLine()){
 
                 currentTree = scan.nextLine();
-                if(!checkTreeBalance(currentTree)) continue;
+                if(!checkTreeBalance(currentTree) || !keyNode.isEmpty() && !currentTree.contains(keyNode)) continue;
 
                 treeParser.parseLine(currentTree);
                 treeNodes = treeParser.getTreeNodes();
