@@ -31,7 +31,7 @@ public class GraphvizFileBuilder {
         }
     }
 
-    public void createDAGFile(ArrayList<Edge> edges, String currentTree) throws IOException {
+    public void createDAGFile(ArrayList<Edge> edges, String currentTree, File definitionFile) throws IOException {
         File file = new File(theDir, currentTree + ".txt");
 
         try(FileOutputStream fileStream = new FileOutputStream(file);

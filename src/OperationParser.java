@@ -8,6 +8,7 @@ public class OperationParser {
 
     private final File operations;
     private HashMap<String, Operation> operationHashMap = new HashMap<>();
+    String nodeNames = "";
 
     private static final int OPERATION = 1;
     private static final int NODE = 2;
@@ -61,6 +62,7 @@ public class OperationParser {
                 case NODE:
                     nodeStrings = trimAndSplit(line);
                     currentOpNode = new OpNode(nodeStrings[1], nodeNum);
+                    nodeNames += currentOpNode.getNodeName();
                     currentOperationNodes.put(currentOpNode.getNodeName(), currentOpNode);
                     operation.addNode(currentOpNode);
                     nodeNum++;
@@ -222,5 +224,10 @@ public class OperationParser {
 
     public HashMap<String, Operation> getOperationHashMap() {
         return operationHashMap;
+    }
+
+    //TODO USE FOR VALIDATION
+    public String getNodeNames() {
+        return nodeNames;
     }
 }

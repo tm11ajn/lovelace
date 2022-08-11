@@ -33,19 +33,28 @@ public class Lovelace {
     private static final String KEY_NODE_IN_TREE = "k";
     private static final String KEY_NODE_IN_TREE_LONG = "key";
 
+    private static final String DEFINITION_FILE = "d";
+    private static final String DEFINITION_FILE_LONG = "definition";
+
+
     public static void main(String[] args) {
         
         Scanner scan;
+        File treeFile, grammarFile;
+        File definitionFile = null;
         ArrayList<Edge> DAGEdges;
         int floor = 0;
-        int roof;
+        int roof = 0;
+        int treeSize;
         String treeFileName = "";
         String grammarFileName = "";
         String keyNode = "";
 
         Options options = generateOptions();
         CommandLineParser cmdParser = new DefaultParser();
-
+        inputCheck inputChecker = new inputCheck();
+        definitionParser defPars;
+        ArrayList<definitionPair> defPairArr = new ArrayList<>();
 
 
         try{
@@ -66,6 +75,13 @@ public class Lovelace {
                 }
             }
 
+            if(commandLine.hasOption(DEFINITION_FILE)){
+                 definitionFile = inputChecker.CheckForValidFile(commandLine.getOptionValue(DEFINITION_FILE));
+                 defPars = new definitionParser(definitionFile);
+                 defPairArr = defPars.parseDefinitions();
+
+            }
+
             if(commandLine.hasOption(KEY_NODE_IN_TREE)){
                 keyNode = commandLine.getOptionValue(KEY_NODE_IN_TREE);
             }
@@ -74,14 +90,12 @@ public class Lovelace {
             System.err.println("The lower limit is below 0 or the upper limit is below the lower limit");
             System.exit(1);
         }catch(ParseException e){
-
+            System.err.println("missing grammar file or tree file");
+            System.exit(1);
         }
 
-
-
-        inputCheck inputChecker = new inputCheck();
-        File treeFile = inputChecker.CheckForValidFile(treeFileName);
-        File grammarFile = inputChecker.CheckForValidFile(grammarFileName);
+        treeFile = inputChecker.CheckForValidFile(treeFileName);
+        grammarFile = inputChecker.CheckForValidFile(grammarFileName);
 
         OperationParser opPars = new OperationParser(grammarFile);
         HashMap<String, Operation> operationHashMap = opPars.getOperationHashMap();
@@ -100,14 +114,17 @@ public class Lovelace {
             while(scan.hasNextLine()){
 
                 currentTree = scan.nextLine();
+                treeSize = currentTree.split("[( ]").length;
+                System.out.println("TREESIZE: " + treeSize);
                 if(!checkTreeBalance(currentTree) || !keyNode.isEmpty() && !currentTree.contains(keyNode)) continue;
+                if(floor > treeSize || roof != 0 && treeSize > roof ) continue;
 
                 treeParser.parseLine(currentTree);
                 treeNodes = treeParser.getTreeNodes();
 
                 System.out.println("DAG number: " + DAGNum);
                 DAGEdges = generator.temp(treeNodes);
-                graphBuild.createDAGFile(DAGEdges, currentTree);
+                graphBuild.createDAGFile(DAGEdges, currentTree, definitionFile);
                 treeNodes.clear();
                 DAGNum++;
             }
@@ -156,14 +173,19 @@ public class Lovelace {
                 "The tree file which is used to generate DAGS");
         Option grammarOpt = new Option(GRAMMAR_FILE, GRAMMAR_FILE_LONG, true,
                 "The file which is used to interpret the trees and make them into DAGS");
+        Option definitionOpt = new Option(DEFINITION_FILE, DEFINITION_FILE_LONG, true,
+                "definitions of variables");
+
 
         lowLimitOpt.setArgName("Low limit");
         highLimitOpt.setArgName("High limit");
         keyNodeOpt.setArgName("key node");
         treeOpt.setArgName("tree file");
         grammarOpt.setArgName("grammar file");
+        definitionOpt.setArgName("definition file");
 
         treeOpt.setRequired(true);
+        definitionOpt.setRequired(false);
         grammarOpt.setRequired(true);
         keyNodeOpt.setRequired(false);
         lowLimitOpt.setRequired(false);
@@ -174,6 +196,7 @@ public class Lovelace {
         options.addOption(keyNodeOpt);
         options.addOption(treeOpt);
         options.addOption(grammarOpt);
+        options.addOption(definitionOpt);
 
 
         return options;
