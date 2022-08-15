@@ -7,7 +7,6 @@ import java.util.Scanner;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -115,7 +114,6 @@ public class Lovelace {
 
                 currentTree = scan.nextLine();
                 treeSize = currentTree.split("[( ]").length;
-                System.out.println("TREESIZE: " + treeSize);
                 if(!checkTreeBalance(currentTree) || !keyNode.isEmpty() && !currentTree.contains(keyNode)) continue;
                 if(floor > treeSize || roof != 0 && treeSize > roof ) continue;
 

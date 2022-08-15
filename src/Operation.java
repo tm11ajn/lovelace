@@ -1,9 +1,11 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Operation {
     private final String opName;
     private ArrayList<OpNode> nodes = new ArrayList<>();
     private ArrayList<Edge> edges = new ArrayList<>();
+    private HashMap<OpNode, ArrayList<EdgeInfo>> edgeInfos = new HashMap<>();
     private final String opType;
     private Boolean isUsed = false;
     private int[] unionPortNumbers;
@@ -20,6 +22,18 @@ public class Operation {
 
     public ArrayList<UnionInfo> getUnionInfos() {
         return unionInfos;
+    }
+
+
+    public void addEdgeInfo(OpNode fromNode, EdgeInfo edgeInfo){
+        ArrayList<EdgeInfo> infos;
+        if(edgeInfos.containsKey(fromNode)){
+            edgeInfos.get(fromNode).add(edgeInfo);
+        }else{
+            infos = new ArrayList<>();
+            infos.add(edgeInfo);
+            edgeInfos.put(fromNode, infos);
+        }
     }
 
     public void setUnionPortNumbers(int lPorts, int rPorts) {
@@ -98,5 +112,9 @@ public class Operation {
 
     public void setUsed(Boolean used) {
         isUsed = used;
+    }
+
+    public HashMap<OpNode, ArrayList<EdgeInfo>> getEdgeInfos() {
+        return edgeInfos;
     }
 }

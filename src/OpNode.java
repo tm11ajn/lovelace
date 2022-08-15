@@ -20,6 +20,10 @@ public class OpNode {
         return portNum;
     }
 
+    public void setPortNum(int portNum) {
+        this.portNum = portNum;
+    }
+
     public String getNodeName() {
         return nodeName;
     }

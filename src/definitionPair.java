@@ -1,13 +1,13 @@
 public class definitionPair {
-    private final String variables;
+    private final String variable;
     private final String[] definitions;
     definitionPair(String variable, String[] definitions){
-        this.variables = variable;
+        this.variable = variable;
         this.definitions = definitions;
     }
 
     public String getVariables() {
-        return variables;
+        return variable;
     }
 
     public String[] getDefinitions() {

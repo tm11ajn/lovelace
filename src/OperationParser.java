@@ -23,10 +23,6 @@ public class OperationParser {
 
         try{
             ParseOps();
-            System.out.println("@@@@@@@PRINTING OPERATIONS");
-            for (Entry<String, Operation> operation: operationHashMap.entrySet()) {
-                testPrintOperation(operation.getValue());
-            }
 
         }catch (FileNotFoundException e){
             System.out.println("cringe file");
@@ -47,9 +43,7 @@ public class OperationParser {
         while(scanner.hasNextLine()){
             currentRow++;
             String line = scanner.nextLine();
-
             if(line.length() == 0) continue;
-
             mode = SetMode(line, mode);
 
             switch(mode){
@@ -72,7 +66,6 @@ public class OperationParser {
                     break;
                 case UNION:
                     if(!line.contains("union")){
-                        System.out.println("inside union");
                         unionInfo = line.trim().split(" ");
                         if(unionInfo.length > 0){
                             UnionInfo uInfo = new UnionInfo(unionInfo);
@@ -178,6 +171,7 @@ public class OperationParser {
                 OpNode fromNode = nodes.get(edgeInfo[0]);
                 OpNode toNode = nodes.get(edgeInfo[2]);
                 operation.addEdge(new Edge(fromNode, toNode, edgeInfo[3]));
+                operation.addEdgeInfo(fromNode, new EdgeInfo(toNode, edgeInfo[3]));
             }
         }
     }
