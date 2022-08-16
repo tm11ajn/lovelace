@@ -7,6 +7,7 @@ public class Graf {
     private HashMap<Integer, OpNode> availablePorts = new HashMap<>();
     private ArrayList<Edge> DAGEdges = new ArrayList<>();
     private ArrayList<OpNode> dagNodes = new ArrayList<>();
+    private HashMap<Integer, OpNode> undefHashMap = new HashMap<>();
 
     public Graf(){
 
@@ -46,5 +47,13 @@ public class Graf {
 
     public ArrayList<OpNode> getDagNodes() {
         return dagNodes;
+    }
+
+    public void addUndefNode(Integer nodeNum, OpNode undefNode){
+        undefHashMap.put(nodeNum, undefNode);
+    }
+
+    public HashMap<Integer, OpNode> getUndefHashMap() {
+        return undefHashMap;
     }
 }
