@@ -17,11 +17,14 @@ public class GraphvizFileBuilder {
         if(theDir.exists()){
 
             deleteDAGDir(theDir);
+            /*
             boolean deleteSuccess = theDir.delete();
             if(!deleteSuccess){
                 System.err.println("UNABLE TO DELETE PREVIOUS DAG DIRECTORY");
                 System.exit(1);
             }
+
+             */
         }
 
         boolean success = theDir.mkdir();
@@ -31,34 +34,50 @@ public class GraphvizFileBuilder {
         }
     }
 
-    public void createDAGFile(ArrayList<Edge> edges, String currentTree, File definitionFile) throws IOException {
-        File file = new File(theDir, currentTree + ".txt");
+    public void createDAGFile(ArrayList<Edge> edges, String currentTree, ArrayList<definitionPair> definitionPairs, int DAGNum) throws IOException {
+        File resultFile;
+        boolean success;
 
-        try(FileOutputStream fileStream = new FileOutputStream(file);
-            DataOutputStream data0 = new DataOutputStream(fileStream)) {
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
+        if(definitionPairs.isEmpty()){
+            File file = new File(theDir, currentTree + ".txt");
+
+            try(FileOutputStream fileStream = new FileOutputStream(file);
+                DataOutputStream data0 = new DataOutputStream(fileStream)) {
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            FileWriter writer = new FileWriter(file);
+            initGraphFile(writer);
+            writeEdgesToFile(writer, edges);
+            writeNodesToFile(writer, edges);
+            writer.write("}");
+            writer.close();
         }
+        else{
+            String dirPath = System.getProperty("user.dir") + "/DAGS/" + "RESULT DAG " + DAGNum;
+            resultFile = new File(dirPath);
+            success = resultFile.mkdir();
+            if(!success){
+                System.err.println("UNABLE TO CREATE DIRECTORY 3213");
+                System.exit(1);
+            }
 
-        FileWriter writer = new FileWriter(file);
-        initGraphFile(writer);
-        writeEdgesToFile(writer, edges);
-        writeNodesToFile(writer, edges);
-        writer.write("}");
-        writer.close();
+
+
+
+        }
     }
 
     private void deleteDAGDir(File file){
         File[] files = file.listFiles();
         if(files != null){
             for (File delFile: files) {
-                if(delFile.isDirectory()){
-                    deleteDAGDir(delFile);
-                }else{
-                    delFile.delete();
-                }
+                deleteDAGDir(delFile);
             }
         }
+        file.delete();
     }
 
     private void initGraphFile(Writer writer) throws IOException {
@@ -87,5 +106,9 @@ public class GraphvizFileBuilder {
                 usedNodeNums.add(edge.getToNode().getNodeNum());
             }
         }
+    }
+
+    private void createResultingFiles(File resultFile, ArrayList<definitionPair> definitionPairs){
+
     }
 }

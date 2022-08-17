@@ -19,7 +19,6 @@ import org.apache.commons.cli.ParseException;
  */
 
 public class Lovelace {
-
     private static final String TREE_FILE = "t";
     private static final String TREE_FILE_LONG = "trees";
 
@@ -35,9 +34,7 @@ public class Lovelace {
     private static final String DEFINITION_FILE = "d";
     private static final String DEFINITION_FILE_LONG = "definition";
 
-
     public static void main(String[] args) {
-        
         Scanner scan;
         File treeFile, grammarFile;
         File definitionFile = null;
@@ -54,7 +51,6 @@ public class Lovelace {
         inputCheck inputChecker = new inputCheck();
         definitionParser defPars;
         ArrayList<definitionPair> defPairArr = new ArrayList<>();
-
 
         try{
             CommandLine commandLine = cmdParser.parse(options, args);
@@ -78,7 +74,6 @@ public class Lovelace {
                  definitionFile = inputChecker.CheckForValidFile(commandLine.getOptionValue(DEFINITION_FILE));
                  defPars = new definitionParser(definitionFile);
                  defPairArr = defPars.parseDefinitions();
-
             }
 
             if(commandLine.hasOption(KEY_NODE_IN_TREE)){
@@ -121,8 +116,8 @@ public class Lovelace {
                 treeNodes = treeParser.getTreeNodes();
 
                 System.out.println("DAG number: " + DAGNum);
-                DAGEdges = generator.temp(treeNodes);
-                graphBuild.createDAGFile(DAGEdges, currentTree, definitionFile);
+                DAGEdges = generator.generateDAGEdges(treeNodes);
+                graphBuild.createDAGFile(DAGEdges, currentTree, defPairArr, DAGNum);
                 treeNodes.clear();
                 DAGNum++;
             }
@@ -131,7 +126,6 @@ public class Lovelace {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         System.exit(0);
     }
 
@@ -174,7 +168,6 @@ public class Lovelace {
         Option definitionOpt = new Option(DEFINITION_FILE, DEFINITION_FILE_LONG, true,
                 "definitions of variables");
 
-
         lowLimitOpt.setArgName("Low limit");
         highLimitOpt.setArgName("High limit");
         keyNodeOpt.setArgName("key node");
@@ -195,7 +188,6 @@ public class Lovelace {
         options.addOption(treeOpt);
         options.addOption(grammarOpt);
         options.addOption(definitionOpt);
-
 
         return options;
     }

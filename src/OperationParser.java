@@ -1,13 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class OperationParser {
-
     private final File operations;
-    private HashMap<String, Operation> operationHashMap = new HashMap<>();
+    private final HashMap<String, Operation> operationHashMap = new HashMap<>();
     String nodeNames = "";
 
     private static final int OPERATION = 1;
@@ -99,7 +97,6 @@ public class OperationParser {
     }
 
     private int SetMode(String line, int mode){
-
         if(line.contains("OPERATION")){
             mode = 1;
         }else if(line.contains("node")){
@@ -143,7 +140,6 @@ public class OperationParser {
                 System.out.println("\t\t\tPORT number:" + node.getPortNum());
             }
         }
-
         System.out.println("\tEDGES:");
         for (Edge edge : operation.getEdges()){
             System.out.println("\t\tFrom node " + edge.getFromNode().getNodeName() + " to node " + edge.getToNode().getNodeName() + " with label " +
@@ -176,7 +172,6 @@ public class OperationParser {
         }
     }
 
-
     private Operation createOperation(String line){
         Operation operation = null;
 
@@ -194,13 +189,11 @@ public class OperationParser {
     }
 
     private String validateNodesInEdge(String fromNode, Operation operation){
-
         for (OpNode node: operation.getNodes()) {
             if(node.getNodeName().equals(fromNode)){
                 return null;
             }
         }
-
         return fromNode;
     }
 

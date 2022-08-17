@@ -94,8 +94,7 @@ public class DAGGenerator {
         }
     }
 
-    //TODO börja med nodeNumber 0 för varje graf
-    public ArrayList<Edge> temp(ArrayList<TreeNode> treeNodes){
+    public ArrayList<Edge> generateDAGEdges(ArrayList<TreeNode> treeNodes){
         this.treeNodes = treeNodes;
         DAGEdges.clear();
         Operation operation;
@@ -107,9 +106,7 @@ public class DAGGenerator {
 
         String parentLabel = null;
         ArrayList<OpNode> childPorts = new ArrayList<>();
-
         Operation childOp;
-
 
         for (TreeNode node : treeNodes) {
 
@@ -117,10 +114,7 @@ public class DAGGenerator {
 
                 operation = operationHashMap.get(node.getLabel());
 
-                if(node.getParent() != null){
-                    parentLabel = node.getParent().getLabel();
-                }
-                extractOperationInformation(node.getLabel(), dag, parentLabel);
+                extractOperationInformation(node, dag);
 
 
 
@@ -128,6 +122,7 @@ public class DAGGenerator {
 
 
 
+                // HÄR KOMMENTERA UT
                 /*
                 if(node.getParent() != null){
 
@@ -169,7 +164,10 @@ public class DAGGenerator {
                     DAGEdges.addAll(operation.getEdges());
                 }
 
+
+
                  */
+                //HÄR KOMMENTERA UT
 
 
 
@@ -180,7 +178,7 @@ public class DAGGenerator {
         printDAGEdges(dag.getDAGEdges());
         resetUsageOfOperations();
 
-        return DAGEdges;
+        return dag.getDAGEdges();
     }
 
     private void adjustPortNums(Operation operation, Operation unionOp, int leftRight){
@@ -199,12 +197,16 @@ public class DAGGenerator {
         }
     }
 
-    private void extractOperationInformation(String operationLabel, Graf dag, String parentLabel){
-        Operation operation = operationHashMap.get(operationLabel);
+    private void extractOperationInformation(TreeNode treeNode, Graf dag){
+        Operation operation = operationHashMap.get(treeNode.getLabel());
+        Operation parentOp = null;
+
+        if(treeNode.getParent() != null){
+            parentOp = operationHashMap.get(treeNode.getParent().getLabel());
+        }
         OpNode fromNode, toNode;
         HashMap<Integer, OpNode> extractedOpNodes = new HashMap<>();
         HashMap<Integer, OpNode> extractedPorts = new HashMap<>();
-
 
         for (OpNode node: operation.getPortNodeArray()) {
 
@@ -214,42 +216,35 @@ public class DAGGenerator {
                     fromNode = extractedOpNodes.get(node.getNodeNum());
                 }else{
                     //SKAPA NODEN OCH KOLLA VILKEN TYP AV NOD DET ÄR.
-                    fromNode = copyNodeToDAG(operationLabel, node, dag, extractedPorts, extractedOpNodes, parentLabel);
+                    fromNode = copyNodeToDAG(operation, parentOp, node, dag, extractedPorts, extractedOpNodes);
                 }
-
                 //HANTERA FÖRBESTÄMDA EDGES
                 for(EdgeInfo info : operation.getEdgeInfos().get(node)){
                     if(extractedOpNodes.containsKey(info.getToNode().getNodeNum())){
                         toNode = extractedOpNodes.get(info.getToNode().getNodeNum());
                     }else{
-                        toNode = copyNodeToDAG(operationLabel, info.getToNode(), dag, extractedPorts, extractedOpNodes, parentLabel);
+                        toNode = copyNodeToDAG(operation, parentOp, info.getToNode(), dag, extractedPorts, extractedOpNodes);
                     }
                     dag.addDAGEdge(new Edge(fromNode, toNode, info.getArg()));
                 }
 
             }else{
-                copyNodeToDAG(operationLabel, node, dag, extractedPorts, extractedOpNodes, parentLabel);
+                copyNodeToDAG(operation, parentOp,node, dag, extractedPorts, extractedOpNodes);
             }
         }
-
-
         dag.addAllPorts(extractedPorts);
     }
 
-    private void createDAGEdges(Operation operation, Graf dag, OpNode fromNode, OpNode node, String parentLabel){
+    private void createDAGEdges(Operation operation, Graf dag, OpNode fromNode, OpNode node){
         OpNode newPortNode;
-        Operation parentOp = null;
         OpNode connectNode;
         for(Dock dock : node.getDocks().values()){
 
             connectNode = dag.popPortStack(dock.getDockNum());
 
             if(connectNode != null){
-                if(parentLabel != null){
-                    parentOp = operationHashMap.get(parentLabel);
-                    for(OpNode portNode : parentOp.getPortNodeArray()){
-
-                        if(portNode.isUndef() && portNode.getPortNum() == dock.getDockNum()){
+                 for(OpNode portNode : operation.getPortNodeArray()){
+                        if(portNode.isUndef() && portNode.getPortNum() == connectNode.getPortNum()){
                             newPortNode = new OpNode(connectNode.getNodeName(), connectNode.getNodeNum());
                             newPortNode.setPortNum(portNode.getPortNum());
                             dag.addUndefNode(portNode.getNodeNum(), connectNode);
@@ -257,10 +252,6 @@ public class DAGGenerator {
                             break;
                         }
                     }
-                }
-
-
-
 
                 for(String arg : dock.getArgs()){
                     dag.addDAGEdge(new Edge(fromNode, connectNode, arg));
@@ -270,15 +261,15 @@ public class DAGGenerator {
         }
     }
 
-    private OpNode copyNodeToDAG(String operationLabel, OpNode node, Graf dag, HashMap<Integer, OpNode> extractedPorts, HashMap<Integer, OpNode> extractedOpNodes, String parentLabel){
-        Operation operation = operationHashMap.get(operationLabel);
+    private OpNode copyNodeToDAG(Operation operation, Operation parentOp, OpNode node, Graf dag, HashMap<Integer, OpNode> extractedPorts, HashMap<Integer, OpNode> extractedOpNodes){
+        //Operation operation = operationHashMap.get(operationLabel);
         OpNode multiNode, portNode, boringNode, dockNode;
         if(!extractedOpNodes.containsKey(node.getNodeNum())){
             if(node.hasPort() && node.isDockNode()){
                 multiNode = new OpNode(node.getNodeName(), nodeNumber);
                 multiNode.setPortNum(node.getPortNum());
                 extractedPorts.put(multiNode.getPortNum(), multiNode);
-                createDAGEdges(operation, dag, multiNode, node, parentLabel);
+                createDAGEdges(operation, dag, multiNode, node);
                 dag.addDAGNode(multiNode);
                 extractedOpNodes.put(node.getNodeNum(), multiNode);
                 nodeNumber++;
@@ -293,6 +284,7 @@ public class DAGGenerator {
 
                 portNode.setPortNum(node.getPortNum());
                 extractedOpNodes.put(node.getNodeNum(), portNode);
+                System.out.println("Adding: " + portNode.getNodeName() + " to extractedPorts");
                 extractedPorts.put(portNode.getPortNum(), portNode);
                 dag.addDAGNode(portNode);
                 nodeNumber++;
@@ -303,7 +295,7 @@ public class DAGGenerator {
                 dockNode = new OpNode(node.getNodeName(), nodeNumber);
                 extractedOpNodes.put(node.getNodeNum(), dockNode);
 
-                createDAGEdges(operation, dag, dockNode, node, parentLabel);
+                createDAGEdges(operation, dag, dockNode, node);
                 dag.addDAGNode(dockNode);
                 nodeNumber++;
                 return dockNode;
@@ -317,9 +309,6 @@ public class DAGGenerator {
         }else{
             return extractedOpNodes.get(node.getNodeNum());
         }
-
-
-
     }
 
     private void printDAGEdges(ArrayList<Edge> edges){
