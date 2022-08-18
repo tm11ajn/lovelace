@@ -1,3 +1,5 @@
-undef node borde vara tom sträng
+Fixa definitionen av variabler.
+Fixa att undef inte har något namn
+lägg till felcheck för unionen (OM RÄTT ANTAL PORTAR).
 
 29 - 31 mellan 9 till 15, 2 timmar.

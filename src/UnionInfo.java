@@ -1,26 +1,22 @@
 import java.util.ArrayList;
 
 public class UnionInfo {
-    private ArrayList<String> portNumbers= new ArrayList<>();
-    private boolean increaseAll = false;
+    private final int numberOfPorts;
+    private final boolean isLeft;
 
     public UnionInfo(String[] info){
 
-        if(info[1].equals("+")){
-            increaseAll = true;
-        }
+        isLeft = info[0].equals("left") || info[0].equals("Left");
 
-        for (int i = 1; i < info.length; i++) {
-            portNumbers.add(info[i]);
-        }
+        numberOfPorts = Integer.parseInt(info[1]);
 
     }
 
-    public ArrayList<String> getPortNumbers() {
-        return portNumbers;
+    public int getNumberOfPorts() {
+        return numberOfPorts;
     }
 
-    public boolean isIncreaseAll() {
-        return increaseAll;
+    public boolean isLeft() {
+        return isLeft;
     }
 }

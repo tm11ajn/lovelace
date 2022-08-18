@@ -181,10 +181,10 @@ OPERATION: persuadecc C
 OPERATION: u U
     union:
     left 1
-    right 2
+    right 1
 
 
 OPERATION: u' U
     union:
     left 1
-    right +
+    right 2

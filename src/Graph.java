@@ -2,19 +2,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class Graf {
-    //LinkedList<OpNode> availablePorts = new LinkedList<>();
+public class Graph {
+    private HashMap<Integer, OpNode> unionPorts = new HashMap<>();
     private HashMap<Integer, OpNode> availablePorts = new HashMap<>();
     private ArrayList<Edge> DAGEdges = new ArrayList<>();
     private ArrayList<OpNode> dagNodes = new ArrayList<>();
     private HashMap<Integer, OpNode> undefHashMap = new HashMap<>();
 
-    public Graf(){
+    public Graph(){
 
     }
 
-    public void addPort(OpNode port){
-        availablePorts.put(port.getPortNum(),port);
+    public void addUnionPort(OpNode port){
+        unionPorts.put(port.getPortNum(),port);
+    }
+
+    public OpNode getUnionPort(int dockNum){
+        if(unionPorts.containsKey(dockNum)){
+            return unionPorts.get(dockNum);
+        }
+
+        return null;
     }
 
     public OpNode popPortStack(int dockNum){
