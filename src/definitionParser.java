@@ -1,22 +1,21 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Map.Entry;
+import java.util.HashMap;
 import java.util.Scanner;
-import java.util.Set;
 
 public class definitionParser {
-    private File definitions;
+    private final File definitions;
     private String variableString = "";
     public definitionParser(File definitions){
         this.definitions = definitions;
     }
 
-    public ArrayList<definitionPair> parseDefinitions(){
+    public HashMap<String, String[]> parseDefinitions(){
         String currentLine;
         String[] splitLine, arguments;
         String currentVariable;
-        ArrayList<definitionPair> definitionPairArr = new ArrayList<>();
+        HashMap<String, String[]> definitionPair = new HashMap<>();
         try{
             Scanner scan = new Scanner(definitions);
             while (scan.hasNextLine()){
@@ -29,11 +28,11 @@ public class definitionParser {
                 currentVariable = splitLine[0];
                 arguments = splitLine[1].trim().split(" ");
                 variableString += currentVariable;
-                definitionPairArr.add(new definitionPair(currentVariable, arguments));
+                definitionPair.put(currentVariable, arguments);
 
             }
 
-            return definitionPairArr;
+            return definitionPair;
 
         }catch(FileNotFoundException e){
             System.err.println("definition file not found");
