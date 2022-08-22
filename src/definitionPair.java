@@ -6,7 +6,7 @@ public class definitionPair {
         this.definitions = definitions;
     }
 
-    public String getVariables() {
+    public String getVariable() {
         return variable;
     }
 

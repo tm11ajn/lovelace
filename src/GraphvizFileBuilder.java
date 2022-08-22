@@ -27,13 +27,15 @@ public class GraphvizFileBuilder {
         }
     }
 
-    public void createDAGFile(ArrayList<Edge> edges, String currentTree, HashMap<String, String[]> definitions, int DAGNum) throws IOException {
+    public void createDAGFile(ArrayList<Edge> edges, String currentTree, ArrayList<definitionPair> definitions, int DAGNum) throws IOException {
         File resultFile, currentFile;
         this.edges = edges;
         DAGindex = 0;
         boolean success;
-        List<OpNode> nodeList;
+        ArrayList<OpNode> nodeList;
         ArrayList<OpNode> definedNodes = new ArrayList<>();
+        int numberOfCombinations;
+        HashMap<String, Integer> numberOfOccurrences = new HashMap<>();
 
 
 
@@ -55,6 +57,12 @@ public class GraphvizFileBuilder {
         }
         else{
             nodeList = fillNodeArray();
+            System.out.println("SIZE OF DEFINITION PAIRS: " + definitions.size());
+            numberOfOccurrences = calculateNumberOfOccurrencesForNodeName(nodeList);
+            System.out.println("OCCURENCES SIZE: " + numberOfOccurrences.values().size());
+            numberOfCombinations = calculateNumberOfCombinations(definitions, numberOfOccurrences);
+            System.out.println(numberOfCombinations);
+
             String dirPath = System.getProperty("user.dir") + "/DAGS/" + "RESULT DAG " + DAGNum;
             treeDir = new File(dirPath);
             success = treeDir.mkdir();
@@ -62,9 +70,6 @@ public class GraphvizFileBuilder {
                 System.err.println("UNABLE TO CREATE DIRECTORY 3213");
                 System.exit(1);
             }
-            //rec(nodeList, definitions, definedNodes);
-
-
         }
     }
 
@@ -107,9 +112,9 @@ public class GraphvizFileBuilder {
         }
     }
 
-    private List<OpNode> fillNodeArray(){
+    private ArrayList<OpNode> fillNodeArray(){
         Set<Integer> usedNodeNums = new HashSet<>();
-        List<OpNode> nodeArray = new ArrayList<>();
+        ArrayList<OpNode> nodeArray = new ArrayList<>();
 
         for (Edge edge : edges){
             if(!usedNodeNums.contains(edge.getFromNode().getNodeNum())){
@@ -228,5 +233,49 @@ public class GraphvizFileBuilder {
             }
         }
 
+    }
+
+    private int calculateNumberOfCombinations(ArrayList<definitionPair> defPars, HashMap<String, Integer> numberOfOccurrences){
+        int result = 0;
+        String variable = "";
+
+        for(definitionPair pair : defPars){
+            variable = pair.getVariable().trim();
+            if(numberOfOccurrences.containsKey(variable)){
+                if(result == 0){
+                    System.out.println("INSIDE RESLT");
+                    result = (int) Math.pow(defPars.size(), numberOfOccurrences.get(variable));
+                }else{
+                    if(numberOfOccurrences.get(variable) == null){
+                        System.out.println("WIHU");
+                    }
+                    result = result * (int) Math.pow(defPars.size(), numberOfOccurrences.get(variable));
+                }
+            }
+        }
+
+
+
+        return result;
+    }
+
+    private HashMap<String,Integer> calculateNumberOfOccurrencesForNodeName(ArrayList<OpNode> nodes){
+        HashMap<String, Integer> numberOfOccurrences= new HashMap<>();
+
+        for (OpNode node: nodes) {
+            if(numberOfOccurrences.containsKey(node.getNodeName())){
+                numberOfOccurrences.put(node.getNodeName(), numberOfOccurrences.get(node.getNodeName()+1));
+            }
+            else{
+                numberOfOccurrences.putIfAbsent(node.getNodeName(),1);
+            }
+        }
+
+        for (int num: numberOfOccurrences.values()) {
+
+            System.out.println(num);
+        }
+
+        return numberOfOccurrences;
     }
 }

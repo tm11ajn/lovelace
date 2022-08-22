@@ -50,8 +50,7 @@ public class Lovelace {
         CommandLineParser cmdParser = new DefaultParser();
         inputCheck inputChecker = new inputCheck();
         definitionParser defPars;
-        //ArrayList<DefinitionPair> defPairArr = new ArrayList<>();
-         HashMap<String, String[]> defPair = new HashMap<>();
+        ArrayList<definitionPair> defPairs = new ArrayList<>();
 
         try{
             CommandLine commandLine = cmdParser.parse(options, args);
@@ -74,7 +73,7 @@ public class Lovelace {
             if(commandLine.hasOption(DEFINITION_FILE)){
                  definitionFile = inputChecker.CheckForValidFile(commandLine.getOptionValue(DEFINITION_FILE));
                  defPars = new definitionParser(definitionFile);
-                 defPair = defPars.parseDefinitions();
+                 defPairs = defPars.parseDefinitions();
             }
 
             if(commandLine.hasOption(KEY_NODE_IN_TREE)){
@@ -118,7 +117,7 @@ public class Lovelace {
 
                 System.out.println("DAG number: " + DAGNum);
                 DAGEdges = generator.generateDAGEdges(treeNodes);
-                graphBuild.createDAGFile(DAGEdges, currentTree, defPair, DAGNum);
+                graphBuild.createDAGFile(DAGEdges, currentTree, defPairs, DAGNum);
                 treeNodes.clear();
                 DAGNum++;
             }

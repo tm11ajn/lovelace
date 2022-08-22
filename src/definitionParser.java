@@ -11,11 +11,11 @@ public class definitionParser {
         this.definitions = definitions;
     }
 
-    public HashMap<String, String[]> parseDefinitions(){
+    public ArrayList<definitionPair> parseDefinitions(){
         String currentLine;
         String[] splitLine, arguments;
         String currentVariable;
-        HashMap<String, String[]> definitionPair = new HashMap<>();
+        ArrayList<definitionPair> defPairs = new ArrayList<>();
         try{
             Scanner scan = new Scanner(definitions);
             while (scan.hasNextLine()){
@@ -28,11 +28,10 @@ public class definitionParser {
                 currentVariable = splitLine[0];
                 arguments = splitLine[1].trim().split(" ");
                 variableString += currentVariable;
-                definitionPair.put(currentVariable, arguments);
-
+                defPairs.add(new definitionPair(currentVariable, arguments));
             }
 
-            return definitionPair;
+            return defPairs;
 
         }catch(FileNotFoundException e){
             System.err.println("definition file not found");
