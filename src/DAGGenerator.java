@@ -203,6 +203,7 @@ public class DAGGenerator {
                     fromNode = copyNodeToDAG(operation, parentNode, treeNode, node, dag, extractedPorts, extractedOpNodes);
                 }
                 //HANTERA FÖRBESTÄMDA EDGES
+                //TODO ÄNDRA FÖR KONTEXTUELLA NODER
                 for(EdgeInfo info : operation.getEdgeInfos().get(node)){
                     if(extractedOpNodes.containsKey(info.getToNode().getNodeNum())){
                         toNode = extractedOpNodes.get(info.getToNode().getNodeNum());

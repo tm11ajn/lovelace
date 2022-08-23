@@ -25,7 +25,7 @@ public class definitionParser {
                 if(splitLine.length != 2){
                     throw new IllegalArgumentException();
                 }
-                currentVariable = splitLine[0];
+                currentVariable = splitLine[0].trim();
                 arguments = splitLine[1].trim().split(" ");
                 variableString += currentVariable;
                 defPairs.add(new definitionPair(currentVariable, arguments));

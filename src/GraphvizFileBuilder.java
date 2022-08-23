@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -7,6 +8,7 @@ public class GraphvizFileBuilder {
     private File treeDir;
     private int DAGindex;
     private ArrayList<Edge> edges;
+    private ArrayList<String> variableRep;
 
     public GraphvizFileBuilder(){
         String dirPath = System.getProperty("user.dir") + "/DAGS";
@@ -33,9 +35,10 @@ public class GraphvizFileBuilder {
         DAGindex = 0;
         boolean success;
         ArrayList<OpNode> nodeList;
-        ArrayList<OpNode> definedNodes = new ArrayList<>();
         int numberOfCombinations;
-        HashMap<String, Integer> numberOfOccurrences = new HashMap<>();
+        HashMap<String, Integer> numberOfOccurrences;
+        ArrayList<ArrayList<String>> combinations;
+        ArrayList<String> stringNodes = new ArrayList<>();
 
 
 
@@ -57,19 +60,21 @@ public class GraphvizFileBuilder {
         }
         else{
             nodeList = fillNodeArray();
-            System.out.println("SIZE OF DEFINITION PAIRS: " + definitions.size());
             numberOfOccurrences = calculateNumberOfOccurrencesForNodeName(nodeList);
-            System.out.println("OCCURENCES SIZE: " + numberOfOccurrences.values().size());
             numberOfCombinations = calculateNumberOfCombinations(definitions, numberOfOccurrences);
-            System.out.println(numberOfCombinations);
+            combinations = generateCombinations(numberOfOccurrences, numberOfCombinations, definitions);
 
             String dirPath = System.getProperty("user.dir") + "/DAGS/" + "RESULT DAG " + DAGNum;
             treeDir = new File(dirPath);
             success = treeDir.mkdir();
+
             if(!success){
                 System.err.println("UNABLE TO CREATE DIRECTORY 3213");
                 System.exit(1);
             }
+
+            stringNodes = convertToStringArr(nodeList);
+            generateDAGForEachCombination(combinations, stringNodes);
         }
     }
 
@@ -132,80 +137,6 @@ public class GraphvizFileBuilder {
     }
 
 
-    private void rec(List<OpNode> nodeArray, ArrayList<definitionPair> defPairs, ArrayList<OpNode> defNodes) throws IOException {
-        boolean foundDef = false;
-        OpNode lastNode;
-        File file;
-
-        if(nodeArray.size() == 1){
-            System.out.println("end of recursion");
-            for(definitionPair pair : defPairs){
-                if(nodeArray.get(0).equals(pair.getVariable())){
-                    for (String definition: pair.getDefinitions()) {
-                        lastNode = new OpNode(definition, nodeArray.get(0).getNodeNum());
-                        defNodes.add(lastNode);
-
-                        file = new File(treeDir, "DAG " +DAGindex + ".txt");
-                        DAGindex++;
-
-                        try(FileOutputStream fileStream = new FileOutputStream(file);
-                            DataOutputStream data0 = new DataOutputStream(fileStream)) {
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                        FileWriter writer = new FileWriter(file);
-                        initGraphFile(writer);
-                        writeEdgesToFile(writer, edges);
-                        writeDefinedNodesToFile(writer, defNodes);
-                        writer.write("}");
-                        defNodes.remove(lastNode);
-                        foundDef = true;
-                    }
-                }
-            }
-            if(!foundDef){
-                defNodes.add(nodeArray.get(0));
-
-                file = new File(treeDir, "DAG " +DAGindex + ".txt");
-                DAGindex++;
-
-                try(FileOutputStream fileStream = new FileOutputStream(file);
-                    DataOutputStream data0 = new DataOutputStream(fileStream)) {
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                FileWriter writer = new FileWriter(file);
-                initGraphFile(writer);
-                writeEdgesToFile(writer, edges);
-                writeDefinedNodesToFile(writer, defNodes);
-                writer.write("}");
-                defNodes.remove(nodeArray.get(0));
-            }
-
-        }else{
-            for (int i = 0 ; i < nodeArray.size() ;i++) {
-                for ( definitionPair pair : defPairs) {
-                    if(nodeArray.get(i).getNodeName().equals(pair.getVariable())){
-                        for (String definition: pair.getDefinitions()) {
-                            lastNode = new OpNode(definition, nodeArray.get(i).getNodeNum());
-                            defNodes.add(lastNode);
-                            rec(nodeArray.subList(i+1, nodeArray.size()), defPairs, defNodes);
-                            defNodes.remove(lastNode);
-                        }
-                        foundDef = true;
-                        break;
-                    }
-                }
-                if(!foundDef){
-                    defNodes.add(nodeArray.get(i));
-                    rec(nodeArray.subList(i+1, nodeArray.size()), defPairs, defNodes);
-                }
-            }
-        }
-    }
-
     private void writeDefinedNodesToFile(Writer writer, ArrayList<OpNode> definedNodes) throws IOException {
         for (OpNode definedNode: definedNodes) {
             writer.write("\t" + definedNode.getNodeNum() + " [label=\"" + definedNode.getNodeName() +"\"" + "]\n");
@@ -213,69 +144,134 @@ public class GraphvizFileBuilder {
 
     }
 
-    private void numberOfDefinedDAGS(ArrayList<OpNode> nodes, HashMap<String, String[]> definitions){
-        HashMap<String, ArrayList<OpNode>> combinations;
-        String multiIndex = "";
-        char[] multiIndexChars;
-        for (OpNode node: nodes) {
-            if(definitions.containsKey(node.getNodeName())){
-                for(int i = 0 ; i < definitions.get(node.getNodeName()).length ; i++){
 
-
-                    if(multiIndex.length() == i) {
-                        multiIndex += i;
-                    }else {
-                        multiIndexChars = multiIndex.toCharArray();
-                        multiIndexChars[i] = (char)i;
-                        multiIndex = String.valueOf(multiIndexChars);
-                    }
-                }
-            }
-        }
-
-    }
 
     private int calculateNumberOfCombinations(ArrayList<definitionPair> defPars, HashMap<String, Integer> numberOfOccurrences){
         int result = 0;
         String variable = "";
 
         for(definitionPair pair : defPars){
-            variable = pair.getVariable().trim();
+            variable = pair.getVariable();
             if(numberOfOccurrences.containsKey(variable)){
                 if(result == 0){
-                    System.out.println("INSIDE RESLT");
-                    result = (int) Math.pow(defPars.size(), numberOfOccurrences.get(variable));
+                    result = (int) Math.pow(pair.getDefinitions().length, numberOfOccurrences.get(variable));
                 }else{
-                    if(numberOfOccurrences.get(variable) == null){
-                        System.out.println("WIHU");
-                    }
-                    result = result * (int) Math.pow(defPars.size(), numberOfOccurrences.get(variable));
+                    result = result * (int) Math.pow(pair.getDefinitions().length, numberOfOccurrences.get(variable));
                 }
             }
         }
-
-
-
         return result;
     }
 
     private HashMap<String,Integer> calculateNumberOfOccurrencesForNodeName(ArrayList<OpNode> nodes){
         HashMap<String, Integer> numberOfOccurrences= new HashMap<>();
+        int newValue;
 
         for (OpNode node: nodes) {
             if(numberOfOccurrences.containsKey(node.getNodeName())){
-                numberOfOccurrences.put(node.getNodeName(), numberOfOccurrences.get(node.getNodeName()+1));
+                newValue = numberOfOccurrences.get(node.getNodeName())+1;
+                numberOfOccurrences.put(node.getNodeName(), newValue);
             }
             else{
                 numberOfOccurrences.putIfAbsent(node.getNodeName(),1);
             }
         }
 
-        for (int num: numberOfOccurrences.values()) {
+        return numberOfOccurrences;
+    }
 
-            System.out.println(num);
+    //
+    private ArrayList<ArrayList<String>> generateCombinations(HashMap<String, Integer> numberOfOccurrences, int loopIndex, ArrayList<definitionPair> defPairs){
+        ArrayList<Integer> counter = new ArrayList<>();
+        ArrayList<Integer> maxIndexes = new ArrayList<>();
+        ArrayList<String[]> values = new ArrayList<>();
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        int counterIndex = 0;
+
+        //Set MaxIndexes, set counter to 0 and add values to the value array.
+        for(definitionPair defPair : defPairs){
+            if(numberOfOccurrences.containsKey(defPair.getVariable())){
+                for(int i = 0; i < numberOfOccurrences.get(defPair.getVariable()); i++){
+                    counter.add(0);
+                    variableRep.add(defPair.getVariable());
+
+                    maxIndexes.add(defPair.getDefinitions().length-1);
+                    values.add(defPair.getDefinitions());
+                }
+            }
         }
 
-        return numberOfOccurrences;
+        //generate every possible combination of variables.
+        for(int i = 0 ; i < loopIndex ; i++){
+            if(counter.get(counterIndex) < maxIndexes.get(counterIndex)){
+                addCurrentCombination(counter, values, result);
+                counter.set(counterIndex, counter.get(counterIndex)+1);
+
+            }else if(counter.get(counterIndex).equals(maxIndexes.get(counterIndex))){
+
+                addCurrentCombination(counter, values, result);
+                for(int j = counterIndex ; j < counter.size() ; j++){
+                    if(counter.get(j).equals(maxIndexes.get(j))){
+                        counter.set(j, 0);
+                    }
+                    else {
+                        counter.set(j, counter.get(j)+1);
+                        counterIndex = 0;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void addCurrentCombination(ArrayList<Integer> counter, ArrayList<String[]> values, ArrayList<ArrayList<String>> result){
+        ArrayList<String> choices = new ArrayList<>();
+        int resultIndex = 0;
+        for(int index : counter){
+            choices.add(values.get(resultIndex)[index]);
+            resultIndex++;
+        }
+        result.add(choices);
+    }
+
+    private void generateDAGForEachCombination(ArrayList<ArrayList<String>> combinations, ArrayList<String> stringNodes) throws IOException{
+        File file;
+        int DAGNum = 0;
+        String label;
+        Writer writer;
+        for(ArrayList<String> combination : combinations){
+            label = "definedDAG" + DAGNum + ".txt";
+            System.out.println(label);
+            file = new File(treeDir, label);
+            DAGNum++;
+
+            try(FileOutputStream fileStream = new FileOutputStream(file);
+                DataOutputStream data0 = new DataOutputStream(fileStream)) {
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            writer = new FileWriter(file);
+            initGraphFile(writer);
+            writeEdgesToFile(writer, edges);
+            //TODO BYT UT FÖRDEFINIERADE NODNAMN MOT DE RIKTIGA DEFINITIONERNA
+            for(int i = 0 ; i < combination.size() ; i ++){
+                for (String stringNode : stringNodes){
+                }
+            }
+
+            writer.close();
+        }
+    }
+
+    private ArrayList<String> convertToStringArr(ArrayList<OpNode> nodes){
+        ArrayList<String> stringNodes= new ArrayList<>();
+        for (OpNode node: nodes) {
+            stringNodes.add("\t" + node.getNodeNum() + " [label=\"" + node.getNodeName() +"\"" + "]\n");
+        }
+
+        return stringNodes;
     }
 }
