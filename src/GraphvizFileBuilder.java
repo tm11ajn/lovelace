@@ -187,6 +187,7 @@ public class GraphvizFileBuilder {
         ArrayList<String[]> values = new ArrayList<>();
         ArrayList<ArrayList<String>> result = new ArrayList<>();
         int counterIndex = 0;
+        variableRep = new ArrayList<>();
 
         //Set MaxIndexes, set counter to 0 and add values to the value array.
         for(definitionPair defPair : defPairs){
@@ -241,9 +242,10 @@ public class GraphvizFileBuilder {
         int DAGNum = 0;
         String label;
         Writer writer;
+        String definedStringNode;
+        int i;
         for(ArrayList<String> combination : combinations){
             label = "definedDAG" + DAGNum + ".txt";
-            System.out.println(label);
             file = new File(treeDir, label);
             DAGNum++;
 
@@ -256,9 +258,15 @@ public class GraphvizFileBuilder {
             writer = new FileWriter(file);
             initGraphFile(writer);
             writeEdgesToFile(writer, edges);
-            //TODO BYT UT FÖRDEFINIERADE NODNAMN MOT DE RIKTIGA DEFINITIONERNA
-            for(int i = 0 ; i < combination.size() ; i ++){
-                for (String stringNode : stringNodes){
+            i = 0;
+            for(int j = 0 ; j < stringNodes.size() ; j++){
+                if(stringNodes.get(j).contains(variableRep.get(i)) && i < combination.size()){
+                    definedStringNode = stringNodes.get(j).replaceAll(variableRep.get(i), combination.get(i));
+                    writer.write(definedStringNode);
+                    i++;
+                }
+                else{
+                    writer.write(stringNodes.get(j));
                 }
             }
 
