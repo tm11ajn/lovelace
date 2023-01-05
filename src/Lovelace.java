@@ -16,10 +16,10 @@ import org.apache.commons.cli.ParseException;
  * It is done by applying a graph extension grammar on the directed trees which combine and
  * restructure nodes of the tree into a DAG represented by the DOT language in a file. This file can
  * be executed Graphviz to visualize the DAG.
- */
-
-
-/**
+ *
+ *
+ *
+ *
  * run program java lovelace.java -g <grammar file> -t <tree file>
  * Optional flags:
  * -L <int> set lower bound number of nodes in tree
@@ -28,7 +28,6 @@ import org.apache.commons.cli.ParseException;
  * x = {boy, girl, them}
  * -k <node name> generates every graph which include a specific node. An example of a key node could be persuade.
  */
-
 public class Lovelace {
     private static final String TREE_FILE = "t";
     private static final String TREE_FILE_LONG = "trees";
@@ -46,9 +45,7 @@ public class Lovelace {
     private static final String DEFINITION_FILE_LONG = "definition";
 
     public static void main(String[] args) {
-        Scanner scan;
-        File treeFile, grammarFile;
-        File definitionFile;
+        File treeFile, grammarFile, definitionFile;
         ArrayList<Edge> DAGEdges;
         int floor = 0;
         int roof = 0;
@@ -80,6 +77,8 @@ public class Lovelace {
                  definitionFile = inputChecker.CheckForValidFile(commandLine.getOptionValue(DEFINITION_FILE));
                  defPars = new definitionParser(definitionFile);
                  defPairs = defPars.parseDefinitions();
+
+                //ArrayList<definitionPair> defPairs = generateDefPairs(definitionFile);
             }
 
             if(commandLine.hasOption(KEY_NODE_IN_TREE)){
@@ -109,12 +108,11 @@ public class Lovelace {
         System.out.println("THIS IS AFTER PARSING THE OPERATIONS:");
         try {
             String currentTree;
-            scan = new Scanner(treeFile);
+            Scanner scan = new Scanner(treeFile);
             while(scan.hasNextLine()){
 
                 currentTree = scan.nextLine();
                 noOfNodesInTree = currentTree.split("[(]").length;
-                //System.out.println(currentTree + "with size: " + treeSize);
                 if(!checkTreeBalance(currentTree) || !keyNode.isEmpty() && !currentTree.contains(keyNode)) continue;
                 if(checkIfTreeSizeWithinRange(floor,roof,noOfNodesInTree)) continue;
 
@@ -161,6 +159,12 @@ public class Lovelace {
                     ". The tree is missing " + balanced + "x '('.");
         }
         return balanced == 0;
+    }
+
+    private static ArrayList<definitionPair> generateDefPairs(File definitionFile){
+        definitionParser defPars;
+        defPars = new definitionParser(definitionFile);
+        return defPars.parseDefinitions();
     }
 
     private static int calculateMinTreeNodes(CommandLine commandLine){

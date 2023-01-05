@@ -38,7 +38,7 @@ public class GraphvizFileBuilder {
         int numberOfCombinations;
         HashMap<String, Integer> numberOfOccurrences;
         ArrayList<ArrayList<String>> combinations;
-        ArrayList<String> stringNodes = new ArrayList<>();
+        ArrayList<String> stringNodes;
 
 
 
@@ -64,7 +64,8 @@ public class GraphvizFileBuilder {
             numberOfCombinations = calculateNumberOfCombinations(definitions, numberOfOccurrences);
             combinations = generateCombinations(numberOfOccurrences, numberOfCombinations, definitions);
 
-            String dirPath = System.getProperty("user.dir") + "/DAGS/" + "RESULT DAG " + DAGNum;
+
+            String dirPath = System.getProperty("user.dir") + "/DAGS/" + currentTree;
             treeDir = new File(dirPath);
             success = treeDir.mkdir();
 
@@ -148,7 +149,7 @@ public class GraphvizFileBuilder {
 
     private int calculateNumberOfCombinations(ArrayList<definitionPair> defPars, HashMap<String, Integer> numberOfOccurrences){
         int result = 0;
-        String variable = "";
+        String variable;
 
         for(definitionPair pair : defPars){
             variable = pair.getVariable();
@@ -180,7 +181,6 @@ public class GraphvizFileBuilder {
         return numberOfOccurrences;
     }
 
-    //
     private ArrayList<ArrayList<String>> generateCombinations(HashMap<String, Integer> numberOfOccurrences, int loopIndex, ArrayList<definitionPair> defPairs){
         ArrayList<Integer> counter = new ArrayList<>();
         ArrayList<Integer> maxIndexes = new ArrayList<>();
@@ -239,7 +239,7 @@ public class GraphvizFileBuilder {
 
     private void generateDAGForEachCombination(ArrayList<ArrayList<String>> combinations, ArrayList<String> stringNodes) throws IOException{
         File file;
-        int DAGNum = 0;
+        int DAGNum = 1;
         String label;
         Writer writer;
         String definedStringNode;
@@ -259,14 +259,19 @@ public class GraphvizFileBuilder {
             initGraphFile(writer);
             writeEdgesToFile(writer, edges);
             i = 0;
-            for(int j = 0 ; j < stringNodes.size() ; j++){
-                if(stringNodes.get(j).contains(variableRep.get(i)) && i < combination.size()){
-                    definedStringNode = stringNodes.get(j).replaceAll(variableRep.get(i), combination.get(i));
+            //System.out.println("size of variableRep: " + variableRep.size());
+            //System.out.println("size of combination: " + combination.size());
+            for (String stringNode : stringNodes) {
+                //System.out.println("INSIDE FOR LOOP");
+                //PROBLEM HERE
+                //i < j which makes problem
+                // TROR LÖST
+                if (i < combination.size() && stringNode.contains(variableRep.get(i))) {
+                    definedStringNode = stringNode.replaceAll(variableRep.get(i), combination.get(i));
                     writer.write(definedStringNode);
                     i++;
-                }
-                else{
-                    writer.write(stringNodes.get(j));
+                } else {
+                    writer.write(stringNode);
                 }
             }
 
