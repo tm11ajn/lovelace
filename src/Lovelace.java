@@ -18,6 +18,17 @@ import org.apache.commons.cli.ParseException;
  * be executed Graphviz to visualize the DAG.
  */
 
+
+/**
+ * run program java lovelace.java -g <grammar file> -t <tree file>
+ * Optional flags:
+ * -L <int> set lower bound number of nodes in tree
+ * -H <int> set upper bound number of nodes in tree
+ * -d <definition file> this file includes definitions of symbols such as x,y,z an example of this could be
+ * x = {boy, girl, them}
+ * -k <node name> generates every graph which include a specific node. An example of a key node could be persuade.
+ */
+
 public class Lovelace {
     private static final String TREE_FILE = "t";
     private static final String TREE_FILE_LONG = "trees";
@@ -37,14 +48,15 @@ public class Lovelace {
     public static void main(String[] args) {
         Scanner scan;
         File treeFile, grammarFile;
-        File definitionFile = null;
+        File definitionFile;
         ArrayList<Edge> DAGEdges;
         int floor = 0;
         int roof = 0;
-        int treeSize;
+        int noOfNodesInTree;
         String treeFileName = "";
         String grammarFileName = "";
         String keyNode = "";
+        ArrayList<TreeNode> treeNodes;
 
         Options options = generateOptions();
         CommandLineParser cmdParser = new DefaultParser();
@@ -58,21 +70,10 @@ public class Lovelace {
             grammarFileName = commandLine.getOptionValue(GRAMMAR_FILE);
 
             if(commandLine.hasOption(START_TREE_SIZE_INTERVAL)){
-                /*
-                floor = Integer.parseInt(commandLine.getOptionValue(START_TREE_SIZE_INTERVAL));
-                if(floor < 0){
-                    throw new NumberFormatException();
-                }
-
-                 */
-
-                floor = calculateFloor(commandLine);
+                floor = calculateMinTreeNodes(commandLine);
             }
             if(commandLine.hasOption(END_TREE_SIZE_INTERVAL)){
-                roof = Integer.parseInt(commandLine.getOptionValue(END_TREE_SIZE_INTERVAL));
-                if(roof < floor){
-                    throw new NumberFormatException();
-                }
+                roof = calculateMaxTreeNodes(floor, commandLine);
             }
 
             if(commandLine.hasOption(DEFINITION_FILE)){
@@ -109,15 +110,13 @@ public class Lovelace {
         try {
             String currentTree;
             scan = new Scanner(treeFile);
-            ArrayList<TreeNode> treeNodes;
             while(scan.hasNextLine()){
 
                 currentTree = scan.nextLine();
-                treeSize = currentTree.split("[(]").length;
-                System.out.println(currentTree + "with size: " + treeSize);
+                noOfNodesInTree = currentTree.split("[(]").length;
+                //System.out.println(currentTree + "with size: " + treeSize);
                 if(!checkTreeBalance(currentTree) || !keyNode.isEmpty() && !currentTree.contains(keyNode)) continue;
-                //Kolla if-satsen, ser konstig ut
-                if(floor > treeSize || roof != 0 && treeSize > roof ) continue;
+                if(checkIfTreeSizeWithinRange(floor,roof,noOfNodesInTree)) continue;
 
                 treeParser.parseLine(currentTree);
                 treeNodes = treeParser.getTreeNodes();
@@ -134,6 +133,10 @@ public class Lovelace {
             e.printStackTrace();
         }
         System.exit(0);
+    }
+
+    private static boolean checkIfTreeSizeWithinRange(int floor, int roof, int noOfNodesInTree){
+        return  floor > noOfNodesInTree || roof != 0 && noOfNodesInTree > roof;
     }
 
     /**
@@ -160,7 +163,7 @@ public class Lovelace {
         return balanced == 0;
     }
 
-    private static int calculateFloor(CommandLine commandLine){
+    private static int calculateMinTreeNodes(CommandLine commandLine){
         int floor;
 
         floor = Integer.parseInt(commandLine.getOptionValue(START_TREE_SIZE_INTERVAL));
@@ -169,6 +172,16 @@ public class Lovelace {
         }
 
         return floor;
+    }
+
+    private static int calculateMaxTreeNodes(int floor, CommandLine commandLine){
+        int roof;
+        roof = Integer.parseInt(commandLine.getOptionValue(END_TREE_SIZE_INTERVAL));
+
+        if(roof < floor){
+            throw new NumberFormatException();
+        }
+        return roof;
     }
 
     private static Options generateOptions(){
