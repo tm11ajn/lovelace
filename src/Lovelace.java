@@ -66,7 +66,7 @@ public class Lovelace {
 
                  */
 
-                calculateFloor(commandLine);
+                floor = calculateFloor(commandLine);
             }
             if(commandLine.hasOption(END_TREE_SIZE_INTERVAL)){
                 roof = Integer.parseInt(commandLine.getOptionValue(END_TREE_SIZE_INTERVAL));
@@ -113,7 +113,8 @@ public class Lovelace {
             while(scan.hasNextLine()){
 
                 currentTree = scan.nextLine();
-                treeSize = currentTree.split("[( ]").length;
+                treeSize = currentTree.split("[(]").length;
+                System.out.println(currentTree + "with size: " + treeSize);
                 if(!checkTreeBalance(currentTree) || !keyNode.isEmpty() && !currentTree.contains(keyNode)) continue;
                 //Kolla if-satsen, ser konstig ut
                 if(floor > treeSize || roof != 0 && treeSize > roof ) continue;
