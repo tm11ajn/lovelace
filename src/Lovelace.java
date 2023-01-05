@@ -58,10 +58,15 @@ public class Lovelace {
             grammarFileName = commandLine.getOptionValue(GRAMMAR_FILE);
 
             if(commandLine.hasOption(START_TREE_SIZE_INTERVAL)){
+                /*
                 floor = Integer.parseInt(commandLine.getOptionValue(START_TREE_SIZE_INTERVAL));
                 if(floor < 0){
                     throw new NumberFormatException();
                 }
+
+                 */
+
+                calculateFloor(commandLine);
             }
             if(commandLine.hasOption(END_TREE_SIZE_INTERVAL)){
                 roof = Integer.parseInt(commandLine.getOptionValue(END_TREE_SIZE_INTERVAL));
@@ -110,6 +115,7 @@ public class Lovelace {
                 currentTree = scan.nextLine();
                 treeSize = currentTree.split("[( ]").length;
                 if(!checkTreeBalance(currentTree) || !keyNode.isEmpty() && !currentTree.contains(keyNode)) continue;
+                //Kolla if-satsen, ser konstig ut
                 if(floor > treeSize || roof != 0 && treeSize > roof ) continue;
 
                 treeParser.parseLine(currentTree);
@@ -151,6 +157,17 @@ public class Lovelace {
                     ". The tree is missing " + balanced + "x '('.");
         }
         return balanced == 0;
+    }
+
+    private static int calculateFloor(CommandLine commandLine){
+        int floor;
+
+        floor = Integer.parseInt(commandLine.getOptionValue(START_TREE_SIZE_INTERVAL));
+        if(floor < 0){
+            throw new NumberFormatException();
+        }
+
+        return floor;
     }
 
     private static Options generateOptions(){
