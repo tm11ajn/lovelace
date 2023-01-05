@@ -1,0 +1,74 @@
+---------------------FROM DAGGenerator.java----------------
+private void generateEdges(String parentLabel, ArrayList<OpNode> childPorts){
+    Operation parentOp = copyOperationIfUsed(operationHashMap.get(parentLabel));
+    ArrayList<OpNode> dockNodes = parentOp.getDockNodes();
+    ArrayList<OpNode> parentPortNodes = parentOp.getPortNodeArray();
+    OpNode fromNode;
+
+    for (OpNode portNode : childPorts){
+        for(OpNode parentDockNode : dockNodes){
+            fromNode = parentDockNode;
+            if(parentDockNode.getDocks().get(portNode.getPortNum()).getArgs() != null){
+                for (String arg: fromNode.getDocks().get(portNode.getPortNum()).getArgs()) {
+                    DAGEdges.add(new Edge(fromNode, portNode, arg));
+                    setUndefinedNode(portNode, parentPortNodes);
+                }
+            }
+
+        }
+    }
+
+}
+
+----------------FROM DAGGenerator.java-----------------
+
+    private void setUndefinedNode(OpNode portNode, ArrayList<OpNode> parentPorts) {
+        for (OpNode parPort : parentPorts) {
+            if (parPort.isUndef() && parPort.getPortNum() == portNode.getPortNum()) {
+                parPort.setNodeName(portNode.getNodeName());
+                parPort.setNodeNum(portNode.getNodeNum());
+                break;
+            }
+        }
+    }
+
+--------------FROM DAGGenerator.java----------------------
+
+    private void handlePortsUnion(Operation currentOperation, ArrayList<OpNode> ports){
+        for(int i = 0 ; i < ports.size()-1 ; i++){
+            for (int j = i+1; j < ports.size(); j++) {
+                if(ports.get(i).getPortNum() == ports.get(j).getPortNum()){
+                    ports.get(j).increasePortNum();
+                }
+            }
+        }
+
+        if(currentOperation.getOpName().equals("u'")){
+            String temp = String.valueOf(ports.get(1).getPortNum());
+            ports.get(1).setPortNum(String.valueOf(ports.get(2).getPortNum()));
+            ports.get(2).setPortNum(temp);
+        }
+
+    }
+
+------------------FROM DAGGenerator.java------------------------
+
+    private void printEdges(){
+        System.out.println("EDGES: ");
+        for (Edge edge: DAGEdges) {
+            System.out.println(edge.getFromNode().getNodeName() + "(" + edge.getFromNode().getNodeNum()+ ")" + " -> "
+                    + edge.getToNode().getNodeName()+ "(" + edge.getToNode().getNodeNum()+ ")" + " with arg: " + edge.getLabel());
+        }
+    }
+
+------------------FROM DAGGenerator.java------------------------
+
+    private Operation copyOperationIfUsed(Operation operation){
+        if(operation.getUsed()){
+            operation = new Operation(operation);
+            nodeNumber = operation.setNodeNums(nodeNumber);
+        }else {
+            operation.setUsed(true);
+        }
+        return operation;
+    }

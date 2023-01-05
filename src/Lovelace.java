@@ -58,7 +58,6 @@ public class Lovelace {
         Options options = generateOptions();
         CommandLineParser cmdParser = new DefaultParser();
         inputCheck inputChecker = new inputCheck();
-        definitionParser defPars;
         ArrayList<definitionPair> defPairs = new ArrayList<>();
 
         try{
@@ -75,10 +74,7 @@ public class Lovelace {
 
             if(commandLine.hasOption(DEFINITION_FILE)){
                  definitionFile = inputChecker.CheckForValidFile(commandLine.getOptionValue(DEFINITION_FILE));
-                 defPars = new definitionParser(definitionFile);
-                 defPairs = defPars.parseDefinitions();
-
-                //ArrayList<definitionPair> defPairs = generateDefPairs(definitionFile);
+                 defPairs = generateDefPairs(definitionFile);
             }
 
             if(commandLine.hasOption(KEY_NODE_IN_TREE)){

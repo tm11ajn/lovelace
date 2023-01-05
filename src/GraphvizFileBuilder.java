@@ -259,13 +259,8 @@ public class GraphvizFileBuilder {
             initGraphFile(writer);
             writeEdgesToFile(writer, edges);
             i = 0;
-            //System.out.println("size of variableRep: " + variableRep.size());
-            //System.out.println("size of combination: " + combination.size());
             for (String stringNode : stringNodes) {
-                //System.out.println("INSIDE FOR LOOP");
-                //PROBLEM HERE
-                //i < j which makes problem
-                // TROR LÖST
+
                 if (i < combination.size() && stringNode.contains(variableRep.get(i))) {
                     definedStringNode = stringNode.replaceAll(variableRep.get(i), combination.get(i));
                     writer.write(definedStringNode);
