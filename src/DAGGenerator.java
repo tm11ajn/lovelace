@@ -8,6 +8,7 @@ public class DAGGenerator {
     private int nodeNumber;
     private Graph dag;
     private Operation curOperation;
+    private ContextualNodeStorage contNodeStrge;
 
     public DAGGenerator(HashMap<String, Operation> operationHashMap){
         this.operationHashMap = operationHashMap;
@@ -23,6 +24,7 @@ public class DAGGenerator {
         DAGEdges.clear();
         nodeNumber = 0;
         dag = new Graph();
+        contNodeStrge = new ContextualNodeStorage();
         TreeNode parentNode = null;
 
         for (TreeNode node : treeNodes) {
@@ -39,6 +41,7 @@ public class DAGGenerator {
 
         printDAGEdges(dag.getDAGEdges());
         resetUsageOfOperations();
+        contNodeStrge.printContextualNodes();
         return dag.getDAGEdges();
     }
 
@@ -66,6 +69,8 @@ public class DAGGenerator {
                     if(extractedOpNodes.containsKey(info.getToNode().getNodeNum())){
                         toNode = extractedOpNodes.get(info.getToNode().getNodeNum());
                     }else{
+                        //TODO KONTEXTUELLA NODER HANTERAS HÄR
+                        //KOMMER BARA SKICKA NODES SOM HAR EN PORT ELLER NODER MED PORT OCH DOCK
                         toNode = copyNodeToDAG(operation, parentNode, treeNode, info.getToNode(), extractedPorts, extractedOpNodes);
                     }
                     dag.addDAGEdge(new Edge(fromNode, toNode, info.getArg()));
@@ -131,6 +136,7 @@ public class DAGGenerator {
                 return multiNode;
 
             }else if(node.hasPort()){
+                System.out.println("CREATE PORTNODE");
                 if(node.getNodeName().equals("undef" ) && dag.getUndefHashMap().containsKey(node.getNodeNum())){
                     portNode = dag.getUndefHashMap().get(node.getNodeNum());
                 }else{
@@ -146,11 +152,13 @@ public class DAGGenerator {
                 }
 
                 extractedOpNodes.put(node.getNodeNum(), portNode);
+                contNodeStrge.insertNodeToHashSet(portNode);
                 dag.addDAGNode(portNode);
                 nodeNumber++;
                 return portNode;
 
             }else if(node.isDockNode()){
+                /*
                 dockNode = new OpNode(node.getNodeName(), nodeNumber);
                 extractedOpNodes.put(node.getNodeNum(), dockNode);
 
@@ -158,8 +166,16 @@ public class DAGGenerator {
                 dag.addDAGNode(dockNode);
                 nodeNumber++;
                 return dockNode;
+                */
+                //TODO GÅR ALDRIG IN HIT?
+                System.out.println("CREATING dockNode");
+
+                return createDockNode(node, extractedOpNodes, currentTreeNode);
             }else{
+                //TODO GÅR ALDRIG IN HIT?
+                System.out.println("STANDARD NODE");
                 standardNode = new OpNode(node.getNodeName(), nodeNumber);
+                contNodeStrge.insertNodeToHashSet(standardNode);
                 extractedOpNodes.put(node.getNodeNum(), standardNode);
                 dag.addDAGNode(standardNode);
                 nodeNumber++;
@@ -168,6 +184,40 @@ public class DAGGenerator {
         }else{
             return extractedOpNodes.get(node.getNodeNum());
         }
+    }
+
+    private OpNode createPortNode(OpNode node, Operation parentOp, TreeNode parentNode, Operation operation,
+                                   HashMap<Integer, OpNode> extractedPorts, HashMap<Integer, OpNode> extractedOpNodes){
+        OpNode portNode;
+        if(node.getNodeName().equals("undef" ) && dag.getUndefHashMap().containsKey(node.getNodeNum())){
+            portNode = dag.getUndefHashMap().get(node.getNodeNum());
+        }else{
+            portNode = new OpNode(node.getNodeName(), nodeNumber);
+        }
+
+        if(parentOp != null && parentOp.getOpType().equals("U")){
+            adjustPortsForUnion(parentNode, operation, portNode, node);
+        }
+        else {
+            portNode.setPortNum(node.getPortNum());
+            extractedPorts.put(portNode.getPortNum(), portNode);
+        }
+
+        extractedOpNodes.put(node.getNodeNum(), portNode);
+        dag.addDAGNode(portNode);
+        nodeNumber++;
+
+        return portNode;
+    }
+
+    private OpNode createDockNode(OpNode node, HashMap<Integer, OpNode> extractedOpNodes, TreeNode currentTreeNode){
+        OpNode dockNode = new OpNode(node.getNodeName(), nodeNumber);
+        extractedOpNodes.put(node.getNodeNum(), dockNode);
+
+        createDAGEdges(dockNode, node, currentTreeNode);
+        dag.addDAGNode(dockNode);
+        nodeNumber++;
+        return dockNode;
     }
 
 
@@ -211,5 +261,9 @@ public class DAGGenerator {
                 dag.addUnionPort(portNode);
             }
         }
+    }
+
+    private void contextualNodes(){
+
     }
 }

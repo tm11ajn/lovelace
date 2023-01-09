@@ -108,6 +108,7 @@ public class Lovelace {
             while(scan.hasNextLine()){
 
                 currentTree = scan.nextLine();
+                System.out.println("current tree: " + currentTree);
                 noOfNodesInTree = currentTree.split("[(]").length;
                 if(!checkTreeBalance(currentTree) || !keyNode.isEmpty() && !currentTree.contains(keyNode)) continue;
                 if(checkIfTreeSizeWithinRange(floor,roof,noOfNodesInTree)) continue;
