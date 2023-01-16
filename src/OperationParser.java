@@ -14,6 +14,7 @@ public class OperationParser {
     private static final int UNION = 4;
     private static final int DOCK = 5;
     private static final int PORT = 6;
+    private static final int CONTNODE = 7;
     private int currentRow = 0;
 
     public OperationParser(File operationFile){

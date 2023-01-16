@@ -4,12 +4,14 @@ import java.util.HashMap;
 public class Operation {
     private final String opName;
     private ArrayList<OpNode> nodes = new ArrayList<>();
+    private ArrayList<OpNode> contNodes = new ArrayList<>();
     private ArrayList<Edge> edges = new ArrayList<>();
     private HashMap<OpNode, ArrayList<EdgeInfo>> edgeInfos = new HashMap<>();
     private final String opType;
     private Boolean isUsed = false;
     private int[] unionPortNumbers;
     private ArrayList<UnionInfo> unionInfos = new ArrayList<>();
+    ArrayList<OpNode> portNodes;
 
     public Operation(String name, String opType){
         this.opName = name;
@@ -22,6 +24,10 @@ public class Operation {
 
     public ArrayList<UnionInfo> getUnionInfos() {
         return unionInfos;
+    }
+
+    public void addContNode(OpNode contNode){
+        contNodes.add(contNode);
     }
 
 
@@ -94,13 +100,32 @@ public class Operation {
     }
 
     public ArrayList<OpNode> getPortNodeArray(){
-        ArrayList<OpNode> portNodes = new ArrayList<>();
+       portNodes = new ArrayList<>();
         for(OpNode node : nodes){
             if(node.hasPort()) portNodes.add(node);
         }
 
         return portNodes;
     }
+
+    public void addPortNodeToOperation(OpNode port){
+        OpNode removePort = null;
+        for (OpNode currPort: portNodes) {
+            if(currPort.getPortNum() == port.getPortNum()){
+                removePort= currPort;
+                break;
+            }
+        }
+
+        if(removePort != null){
+            portNodes.remove(removePort);
+        }
+
+        portNodes.add(port);
+    }
+
+
+
 
     public String getOpType() {
         return opType;

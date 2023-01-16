@@ -11,12 +11,20 @@ public class ContextualNodeStorage {
     }
 
     public void insertNodeToHashSet(OpNode node){
-        if(contextNodesHashmap.containsKey(node.getNodeName()) && !contextNodesHashmap.get(node.getNodeName()).contains(node)){
-            contextNodesHashmap.get(node.getNodeName()).add(node);
+        ArrayList<OpNode> nodes;
+        if(contextNodesHashmap.containsKey(node.getNodeName())){
+            System.out.println("INSERTING CONTEXTNODE INTO ARRAY" + node.getNodeName());
+            nodes = contextNodesHashmap.get(node.getNodeName());
+            if(!nodes.contains(node)){
+                nodes.add(node);
+            }
 
         }else{
-            System.out.println("HELLO");
-            contextNodesHashmap.put(node.getNodeName(), new ArrayList<>());
+            System.out.println("CREATING CONTEXT ARRAY FOR NODE: " + node.getNodeName() + " with node number: " + node.getNodeNum());
+            ArrayList<OpNode> nodeList= new ArrayList<>();
+            nodeList.add(node);
+            contextNodesHashmap.put(node.getNodeName(), nodeList);
+
         }
     }
 
@@ -24,8 +32,8 @@ public class ContextualNodeStorage {
         contextNodesHashmap.clear();
     }
 
-    public boolean contextualNodesIsEmpty(String nodeName){
-        return contextNodesHashmap.get(nodeName).isEmpty();
+    public boolean hasContextualNodesForNodeName(String nodeName){
+        return !contextNodesHashmap.get(nodeName).isEmpty();
     }
 
     public OpNode getRandomContextualNode(String nodeName){

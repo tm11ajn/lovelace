@@ -1,0 +1,3 @@
+trys(persuadec(zc1(sx)))
+persuadec(zc1(sx))
+trys(persuadec(persuadec(zc1(s'x))))
