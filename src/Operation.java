@@ -3,6 +3,7 @@ import java.util.HashMap;
 
 public class Operation {
     private final String opName;
+    private contextRule contextRule;
     private ArrayList<OpNode> nodes = new ArrayList<>();
     private ArrayList<OpNode> contNodes = new ArrayList<>();
     private ArrayList<Edge> edges = new ArrayList<>();
@@ -13,9 +14,19 @@ public class Operation {
     private ArrayList<UnionInfo> unionInfos = new ArrayList<>();
     ArrayList<OpNode> portNodes;
 
+
+
     public Operation(String name, String opType){
         this.opName = name;
         this.opType = opType;
+    }
+
+    public void setContextRule(contextRule contextRule) {
+        this.contextRule = contextRule;
+    }
+
+    public contextRule getContextRule() {
+        return contextRule;
     }
 
     public void addUnionInfo(UnionInfo uInfo){

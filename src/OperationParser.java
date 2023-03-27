@@ -15,6 +15,7 @@ public class OperationParser {
     private static final int DOCK = 5;
     private static final int PORT = 6;
     private static final int CONTNODE = 7;
+    private static final int CONTEXTRULE = 8;
     private int currentRow = 0;
 
     public OperationParser(File operationFile){
@@ -83,6 +84,14 @@ public class OperationParser {
                     if(currentOpNode != null){
                         currentOpNode.setPortNum(portStrings[1]);
                     }
+                    break;
+
+                case CONTEXTRULE:
+                    //implement
+
+                    break;
+
+                default:
                     break;
             }
         }
