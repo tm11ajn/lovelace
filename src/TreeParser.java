@@ -25,8 +25,6 @@ public class TreeParser {
             if(!treeNodes.contains(tree)){
                 treeNodes.add(tree);
             }
-
-
             return tree;
 
         } else {

@@ -55,7 +55,7 @@ public class GraphvizFileBuilder {
             initGraphFile(writer);
             writeEdgesToFile(writer, edges);
             writeNodesToFile(writer, edges);
-            writer.write("}");
+            writer.write("}\n");
             writer.close();
         }
         else{
@@ -269,7 +269,7 @@ public class GraphvizFileBuilder {
                     writer.write(stringNode);
                 }
             }
-
+            writer.write("}");
             writer.close();
         }
     }
