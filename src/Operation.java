@@ -9,6 +9,7 @@ public class Operation {
     private ArrayList<Edge> edges = new ArrayList<>();
     private HashMap<OpNode, ArrayList<EdgeInfo>> edgeInfos = new HashMap<>();
     private final String opType;
+    private boolean isUnion;
     private Boolean isUsed = false;
     private int[] unionPortNumbers;
     private ArrayList<UnionInfo> unionInfos = new ArrayList<>();
@@ -19,6 +20,11 @@ public class Operation {
     public Operation(String name, String opType){
         this.opName = name;
         this.opType = opType;
+    }
+
+    public Operation(String name){
+        this.opName = name;
+        this.opType = null;
     }
 
     public void setContextRule(contextRule contextRule) {
@@ -133,6 +139,14 @@ public class Operation {
         }
 
         portNodes.add(port);
+    }
+
+    public boolean isUnion() {
+        return isUnion;
+    }
+
+    public void setUnion(boolean union) {
+        isUnion = union;
     }
 
 

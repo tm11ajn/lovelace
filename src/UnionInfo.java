@@ -12,6 +12,20 @@ public class UnionInfo {
 
     }
 
+    public UnionInfo(String stringPorts, boolean isLeft){
+        this.isLeft = isLeft;
+        this.numberOfPorts = Integer.parseInt(stringPorts);
+        /*
+        if(isLeft){
+            System.out.println("Left with number of ports:" + this.numberOfPorts);
+        }else{
+            System.out.println("Right with number of ports:" + this.numberOfPorts);
+        }
+
+         */
+
+    }
+
     public int getNumberOfPorts() {
         return numberOfPorts;
     }

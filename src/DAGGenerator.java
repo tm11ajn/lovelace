@@ -30,6 +30,7 @@ public class DAGGenerator {
         for (TreeNode node : treeNodes) {
 
             if(operationHashMap.containsKey(node.getLabel())){
+                System.out.println("Current Operation: " + node.getLabel());
 
                 if(node.getParent() != null){
                     parentNode = node.getParent();
@@ -48,6 +49,7 @@ public class DAGGenerator {
 
     private void extractOperationInformation(TreeNode treeNode, TreeNode parentNode){
         Operation operation = operationHashMap.get(treeNode.getLabel());
+        Operation lChild;
         setCurrentOperation(operationHashMap.get(treeNode.getLabel()));
         OpNode fromNode, toNode;
         OpNode removeNode = null;
@@ -77,10 +79,18 @@ public class DAGGenerator {
 
 
                         if(contNodeStrge.hasContextualNodesForNodeName(info.getToNode().getNodeName())){
-                            System.out.println("GETTING CONT NODE");
+                            System.out.println("GETTING CONT NODE with function " + operation.getOpName());
+                            System.out.println("WITH PARENT NODE: " + treeNode.getParent().getLabel());
                             toNode = contNodeStrge.getRandomContextualNode(info.getToNode().getNodeName());
                             createdPortNumbers.add(toNode.getPortNum());
                             currOpPorts = getCurrentOperation().getPortNodeArray();
+                            if(treeNode.getParent() != null && operationHashMap.get(treeNode.getParent().getLabel()).isUnion()){
+                                //System.out.println("ADDING NODE");
+                                //TreeNode parentNode, Operation operation, OpNode portNode, OpNode node
+                                adjustPortsForUnion(treeNode.getParent(), operation, toNode, toNode);
+                                //toNode.setPortNum(node.getPortNum() + operationHashMap.get(parentNode.getLabel()).getUnionInfos().get(0).getNumberOfPorts());
+                                dag.addUnionPort(toNode);
+                            }
                             extractedPorts.put(toNode.getPortNum(), toNode);
                             /*
                             for (OpNode port: currOpPorts) {
@@ -101,8 +111,6 @@ public class DAGGenerator {
 
                             toNode = copyNodeToDAG(operation, parentNode, treeNode, info.getToNode(), extractedPorts, extractedOpNodes);
                         }
-
-
 
                        // toNode = copyNodeToDAG(operation, parentNode, treeNode, info.getToNode(), extractedPorts, extractedOpNodes);
                     }
@@ -126,10 +134,13 @@ public class DAGGenerator {
     private void createDAGEdges(OpNode fromNode, OpNode node, TreeNode currentTree){
         OpNode connectNode;
 
-        if(!currentTree.getChildren().isEmpty() && operationHashMap.get(currentTree.getChildren().get(0).getLabel()).getOpType().equals("U")){
+        if(!currentTree.getChildren().isEmpty() && //operationHashMap.get(currentTree.getChildren().get(0).getLabel()).getOpType().equals("U")
+                operationHashMap.get(currentTree.getChildren().get(0).getLabel()).isUnion()){
+
             for (Dock dock : node.getDocks().values()){
                 connectNode = dag.getUnionPort(dock.getDockNum());
                 if(connectNode != null){
+                    System.out.println("from " + fromNode.getNodeName() +"(" + fromNode.getNodeNum()+ ")"+ " to " +connectNode.getNodeName() +"(" + connectNode.getNodeNum()+ ")");
                     connectDocksAndPorts(connectNode, dock, fromNode);
                 }
             }
@@ -138,6 +149,7 @@ public class DAGGenerator {
                 connectNode = dag.popPortStack(dock.getDockNum());
 
                 if(connectNode != null){
+                    System.out.println("from " + fromNode.getNodeName()+ " to " +connectNode.getNodeName());
                     connectDocksAndPorts(connectNode, dock, fromNode);
                 }
             }
@@ -157,7 +169,9 @@ public class DAGGenerator {
             if(node.hasPort() && node.isDockNode()){
                 multiNode = new OpNode(node.getNodeName(), nodeNumber);
 
-                if(parentOp != null && parentOp.getOpType().equals("U")){
+                if(parentOp != null && //parentOp.getOpType().equals("U")
+                parentOp.isUnion()){
+                    System.out.println("WIHU");
                     adjustPortsForUnion(parentNode, operation, multiNode, node);
                 }else{
                     multiNode.setPortNum(node.getPortNum());
@@ -179,7 +193,8 @@ public class DAGGenerator {
                     System.out.println("portNode with number: " + portNode.getNodeNum());
                 }
 
-                if(parentOp != null && parentOp.getOpType().equals("U")){
+                if(parentOp != null && //parentOp.getOpType().equals("U")
+                parentOp.isUnion()){
                     adjustPortsForUnion(parentNode, operation, portNode, node);
                 }
                 else {
@@ -231,7 +246,8 @@ public class DAGGenerator {
             portNode = new OpNode(node.getNodeName(), nodeNumber);
         }
 
-        if(parentOp != null && parentOp.getOpType().equals("U")){
+        if(parentOp != null && //parentOp.getOpType().equals("U")
+        parentOp.isUnion()){
             adjustPortsForUnion(parentNode, operation, portNode, node);
         }
         else {

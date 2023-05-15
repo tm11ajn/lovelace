@@ -1,3 +1,5 @@
+import org.w3c.dom.ls.LSOutput;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,10 +16,15 @@ public class Graph {
     }
 
     public void addUnionPort(OpNode port){
+        int i = 0;
+        i++;
+        System.out.println("" +
+                "HSIUHIUSHI: " + i);
         unionPorts.put(port.getPortNum(),port);
-    }
 
+    }
     public OpNode getUnionPort(int dockNum){
+        System.out.println("NUMBER OF UNION PORTS: " + unionPorts.size());
         if(unionPorts.containsKey(dockNum)){
             return unionPorts.get(dockNum);
         }

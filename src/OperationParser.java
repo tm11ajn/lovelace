@@ -48,7 +48,8 @@ public class OperationParser {
 
             switch(mode){
                 case OPERATION:
-                    operation = createOperation(line);
+                    operation = createNewOperation(line);
+                    //System.out.println("Operation created: " + operation.getOpName());
                     operationHashMap.put(operation.getOpName(), operation);
                     currentOperationNodes.clear();
                     break;
@@ -65,13 +66,23 @@ public class OperationParser {
                     if(!line.contains("edge")) addValidEdgeToOperation(operation, line, currentOperationNodes);
                     break;
                 case UNION:
-                    if(!line.contains("union")){
+                    //if(!line.contains("union")){
                         unionInfo = line.trim().split(" ");
-                        if(unionInfo.length > 0){
-                            UnionInfo uInfo = new UnionInfo(unionInfo);
+                        //if(unionInfo.length == 0){
+                        //    UnionInfo uInfo = new UnionInfo(unionInfo);
+                        //    operation.addUnionInfo(uInfo);
+                        //}
+                    //System.out.println("UNION: operation name:" + operation.getOpName());
+                        //TODO optimera, ändra UnionInfo så det räcker att skapa en UnionInfo
+                        if(unionInfo.length == 2){
+                            UnionInfo uInfo = new UnionInfo(unionInfo[0], true);
                             operation.addUnionInfo(uInfo);
+
+                            UnionInfo uInfo2 = new UnionInfo(unionInfo[1], false);
+                            operation.addUnionInfo(uInfo2);
+                            operation.setUnion(true);
                         }
-                    }
+                    //}
                     break;
                 case DOCK:
                     if(!line.contains("DOCK")){
@@ -87,7 +98,7 @@ public class OperationParser {
                     break;
 
                 case CONTEXTRULE:
-                    //implement
+                    //kommer nog inte behövas
 
                     break;
 
@@ -113,15 +124,30 @@ public class OperationParser {
             mode = 2;
         }else if(line.contains("edges")){
             mode = 3;
-        }else if(line.contains("union")){
-            mode = 4;
+        //}else if(line.contains("union")){
+        //    mode = 4;
         }else if(line.contains("DOCK")){
             mode = 5;
         }else if(line.contains("PORT")){
             mode = 6;
+        }else if(checkForUnion(line)){
+            mode = 4;
         }
 
         return mode;
+    }
+
+    private boolean checkForUnion(String line){
+        String[] lineArgs = trimAndSplit(line);
+
+        if (lineArgs.length == 2) {
+
+            return (lineArgs[0].length() == 1 && Character.isDigit(lineArgs[0].charAt(0)) &&
+                    lineArgs[1].length() == 1 && Character.isDigit(lineArgs[1].charAt(0)));
+
+        }else{
+            return false;
+        }
     }
 
     private void testPrintOperation(Operation operation){
@@ -157,10 +183,7 @@ public class OperationParser {
         }
     }
 
-    private String[] trimAndSplit(String line){
-        line = line.trim();
-        return line.split(" ");
-    }
+
 
     private void addValidEdgeToOperation(Operation operation, String line, HashMap<String, OpNode> nodes){
             String nonexNode;
@@ -198,6 +221,22 @@ public class OperationParser {
         return operation;
     }
 
+    private Operation createNewOperation(String line){
+        Operation operation = null;
+
+        String[] opArgs = trimAndSplit(line);
+        if(opArgs.length == 2){
+            operation = new Operation(opArgs[1]);
+        }else{
+            System.out.println(line);
+            System.err.println("ERROR: incorrect number of argument in operation declaration");
+            System.exit(1);
+        }
+
+
+        return operation;
+    }
+
     private String validateNodesInEdge(String fromNode, Operation operation){
         for (OpNode node: operation.getNodes()) {
             if(node.getNodeName().equals(fromNode)){
@@ -226,5 +265,10 @@ public class OperationParser {
     //TODO USE FOR VALIDATION
     public String getNodeNames() {
         return nodeNames;
+    }
+
+    private String[] trimAndSplit(String line){
+        line = line.trim();
+        return line.split(" ");
     }
 }
