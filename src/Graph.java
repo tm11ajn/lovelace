@@ -65,7 +65,8 @@ public class Graph {
     }
 
     public void addUndefNode(Integer nodeNum, OpNode undefNode){
-        undefHashMap.put(nodeNum, undefNode);
+        OpNode tempNode = new OpNode(undefNode.getNodeName(), undefNode.getNodeNum(), undefNode.getPortNum());
+        undefHashMap.put(nodeNum, tempNode);
     }
 
     public HashMap<Integer, OpNode> getUndefHashMap() {

@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -10,7 +11,7 @@ public class OperationParser {
 
     private static final int OPERATION = 1;
     private static final int NODE = 2;
-    private static final int EDGE = 3;
+    private static final int EDGE_OR_DOCK = 3;
     private static final int UNION = 4;
     private static final int DOCK = 5;
     private static final int PORT = 6;
@@ -33,12 +34,22 @@ public class OperationParser {
         Scanner scanner = new Scanner(operations);
         int mode = 0;
         int nodeNum = 0;
+        int portNum, dockNum, fromNodeNumber, toNodeNumber, dockInternalID, nodeInternalID;
         Operation operation = null;
         OpNode currentOpNode = null;
+        OpNode toNode, fromNode;
         HashMap<String, OpNode> currentOperationNodes = new HashMap<>();
+        HashMap<Integer, OpNode> currentOperationNode2 = new HashMap<>();
+        HashMap<Integer, Dock> currentOperationDocks = new HashMap<>();
+        ArrayList<Edge> contextualEdgeList = new ArrayList<>();
         String[] portStrings;
         String[] nodeStrings;
+        String nodeString, nodeName, arg;
         String[] unionInfo;
+        String[] handlePort, handleEdge;
+        Dock dock, dockFound;
+        Edge edge;
+
 
         while(scanner.hasNextLine()){
             currentRow++;
@@ -52,18 +63,83 @@ public class OperationParser {
                     //System.out.println("Operation created: " + operation.getOpName());
                     operationHashMap.put(operation.getOpName(), operation);
                     currentOperationNodes.clear();
+                    currentOperationNode2.clear();
+                    currentOperationDocks.clear();
                     break;
 
                 case NODE:
-                    nodeStrings = trimAndSplit(line);
-                    currentOpNode = new OpNode(nodeStrings[1], nodeNum);
-                    nodeNames += currentOpNode.getNodeName();
+                    //nodeStrings = trimAndSplit(line);
+                    //currentOpNode = new OpNode(nodeStrings[1], nodeNum);
+                    //nodeNames += currentOpNode.getNodeName();
+                    //currentOperationNodes.put(currentOpNode.getNodeName(), currentOpNode);
+                    //operation.addNode(currentOpNode);
+
+                    nodeString = line.trim();
+                    nodeName = nodeString.substring(nodeString.indexOf("\"")+1, nodeString.lastIndexOf("\""));
+                    nodeInternalID = Integer.parseInt(nodeString.substring(0, nodeString.lastIndexOf("[")).trim());
+                    System.out.println("node name: " + nodeName);
+                    if(nodeString.contains(",")){
+                        handlePort = nodeString.split(",");
+                        portNum = Integer.parseInt(handlePort[1].substring(handlePort[1].indexOf("=")+1, handlePort[1].lastIndexOf("]")).trim());
+                        currentOpNode = new OpNode(nodeName, nodeNum, portNum);
+
+                    }else{
+                        currentOpNode = new OpNode(nodeName, nodeNum);
+                    }
                     currentOperationNodes.put(currentOpNode.getNodeName(), currentOpNode);
+                    System.out.println("insert: " + currentOpNode.getNodeName() +" with internal ID: " + nodeInternalID);
+                    currentOperationNode2.put(nodeInternalID, currentOpNode);
                     operation.addNode(currentOpNode);
+
                     nodeNum++;
                     break;
-                case EDGE:
-                    if(!line.contains("edge")) addValidEdgeToOperation(operation, line, currentOperationNodes);
+                case EDGE_OR_DOCK:
+                    //if(!line.contains("edge")) addValidEdgeToOperation(operation, line, currentOperationNodes);
+
+                    handleEdge = line.trim().split("->");
+                    fromNodeNumber = Integer.parseInt(handleEdge[0].trim());
+                    toNodeNumber = Integer.parseInt(handleEdge[1].substring(0, handleEdge[1].lastIndexOf("[")).trim());
+                    arg = handleEdge[1].substring(handleEdge[1].indexOf("\"")+1, handleEdge[1].lastIndexOf("\"")).trim();
+
+                    System.out.println("From node number: " + fromNodeNumber + " -> " + toNodeNumber + " with arg: " + arg);
+
+
+                    if(currentOperationNode2.containsKey(fromNodeNumber)){
+                        fromNode = currentOperationNode2.get(fromNodeNumber);
+                        System.out.println("from node: " + fromNode.getNodeName()+"("+fromNode.getNodeNum()+")");
+                        if(currentOperationNode2.containsKey(toNodeNumber)){
+                            toNode = currentOperationNode2.get(toNodeNumber);
+
+                            if(!toNode.getNodeName().equals("undef") && toNode.hasPort()){
+                                operation.addEdge(new Edge(fromNode, toNode, arg));
+                                operation.addEdgeInfo(fromNode, new EdgeInfo(toNode, arg));
+                            }else if(!toNode.getNodeName().equals("undef")){
+                                //TODO
+                                operation.addEdgeInfo(fromNode, new EdgeInfo(toNode, arg));
+                            }
+
+                        }else if(currentOperationDocks.containsKey(toNodeNumber)){
+                            System.out.println("CREATING DOCK");
+                            dockFound = currentOperationDocks.get(toNodeNumber);
+                            dockFound.insertArg(arg);
+                            if(!fromNode.getDocks().containsKey(dockFound.getDockNum())){
+                                System.out.println("DOCK ADDED");
+                                fromNode.addDock(dockFound.getDockNum(), dockFound);
+                            }
+                            //fromNode.addDock(dockFound.getDockNum(), dockFound);
+                        }else{
+                            System.out.println("bad edge, unable to identify node or dock. Exit program");
+                            System.exit(1);
+
+                        }
+                    }else{
+                        System.out.println("Invalid edge: " + line);
+                        System.exit(1);
+                    }
+
+
+
+
                     break;
                 case UNION:
                     //if(!line.contains("union")){
@@ -85,9 +161,28 @@ public class OperationParser {
                     //}
                     break;
                 case DOCK:
-                    if(!line.contains("DOCK")){
-                        addDocks(line, currentOpNode);
+                    //if(!line.contains("DOCK")){
+                    //    addDocks(line, currentOpNode);
+                    //}
+                    line = line.trim();
+                    if(Character.isDigit(line.charAt(0))){
+                        dockInternalID = Integer.parseInt(String.valueOf(line.charAt(0)));
+
+                        //System.out.println("dock id =" + dockInternalID);
+                        dockNum = Integer.parseInt(line.substring(line.indexOf("=")+1, line.lastIndexOf("]")).trim());
+                        //System.out.println("dock number: " + dockNum);
+                        //handleDock =
+                        dock = new Dock(dockNum);
+                        currentOperationDocks.put(dockInternalID, dock);
+                    }else{
+                        System.out.println("faulty dock: " + line);
+                        System.exit(1);
                     }
+
+
+
+
+
                     break;
                 case PORT:
                     portStrings = trimAndSplit(line);
@@ -118,23 +213,41 @@ public class OperationParser {
     }
 
     private int SetMode(String line, int mode){
-        if(line.contains("OPERATION")){
+        line = line.toLowerCase();
+
+        if(line.contains("operation")) {
             mode = 1;
-        }else if(line.contains("node")){
+            //}else if(line.contains("node")){
+        }else if(checkForNode(line)){
             mode = 2;
-        }else if(line.contains("edges")){
+        //}else if(line.contains("edges")) {
+        //    mode = 3;
+        }else if(line.contains("->")){
             mode = 3;
+
         //}else if(line.contains("union")){
         //    mode = 4;
-        }else if(line.contains("DOCK")){
+        }else if(line.contains("dock")){
             mode = 5;
-        }else if(line.contains("PORT")){
+        }else if(line.contains("port")){
             mode = 6;
         }else if(checkForUnion(line)){
             mode = 4;
+        }else{
+            mode = 0;
         }
 
         return mode;
+    }
+
+
+    //verify if it is a node or not
+    private boolean checkForNode(String line){
+        //System.out.println("inside checkForNodes with line: " + line);
+        if(!line.contains("->") && line.contains("label")){
+            return true;
+        }
+        return false;
     }
 
     private boolean checkForUnion(String line){
@@ -225,7 +338,8 @@ public class OperationParser {
         Operation operation = null;
 
         String[] opArgs = trimAndSplit(line);
-        if(opArgs.length == 2){
+        if(opArgs.length == 3){
+            //System.out.println("operation:" + line +" created");
             operation = new Operation(opArgs[1]);
         }else{
             System.out.println(line);

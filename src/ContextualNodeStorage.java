@@ -10,6 +10,7 @@ public class ContextualNodeStorage {
         contextNodesHashmap = new HashMap<>();
     }
 
+    //port noder borde inte finnas här??? eller kanske, oklart
     public void insertNodeToHashSet(OpNode node){
         ArrayList<OpNode> nodes;
         if(contextNodesHashmap.containsKey(node.getNodeName())){
@@ -32,8 +33,17 @@ public class ContextualNodeStorage {
         contextNodesHashmap.clear();
     }
 
+
+    //This does not do what it should do
+    //TODO FIX but check impact before fix
     public boolean hasContextualNodesForNodeName(String nodeName){
-        return !contextNodesHashmap.get(nodeName).isEmpty();
+
+        return contextNodesHashmap.containsKey(nodeName) && contextNodesHashmap.get(nodeName).isEmpty();
+    }
+
+    //this does what it should do
+    public boolean hasContextualNodeForNodeName(String nodeName){
+        return contextNodesHashmap.containsKey(nodeName) && !contextNodesHashmap.get(nodeName).isEmpty();
     }
 
     public OpNode getRandomContextualNode(String nodeName){

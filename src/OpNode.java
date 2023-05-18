@@ -16,6 +16,17 @@ public class OpNode {
         }
     }
 
+    public OpNode(String name, int nodeNum, int portNum){
+        this.nodeName = name;
+        this.nodeNum = nodeNum;
+        this.portNum = portNum;
+
+        if(name.equals("undef")){
+            System.out.println("AND NAME IS UNDEF WITH PORT NUMBER: " + this.portNum);
+            this.undef = true;
+        }
+    }
+
     public int getPortNum() {
         return portNum;
     }

@@ -14,6 +14,7 @@ public class Operation {
     private int[] unionPortNumbers;
     private ArrayList<UnionInfo> unionInfos = new ArrayList<>();
     ArrayList<OpNode> portNodes;
+    private ArrayList<Edge> contextualEdgeList = new ArrayList<>();
 
 
 
@@ -63,6 +64,14 @@ public class Operation {
         unionPortNumbers = new int[2];
         unionPortNumbers[0] = lPorts;
         unionPortNumbers[1] = rPorts;
+    }
+
+    public void addContextualEdge(Edge edge){
+        contextualEdgeList.add(edge);
+    }
+
+    public ArrayList<Edge> getContextualEdgeList() {
+        return contextualEdgeList;
     }
 
     public int[] getUnionPortNumbers() {
