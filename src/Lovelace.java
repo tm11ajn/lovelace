@@ -17,7 +17,7 @@ import org.apache.commons.cli.ParseException;
  * restructure nodes of the tree into a DAG represented by the DOT language in a file. This file can
  * be executed Graphviz to visualize the DAG.
  *
- *
+ * @author Eric Aandersson
  *
  *
  * run program java lovelace.java -g <grammar file> -t <tree file>

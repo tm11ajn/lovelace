@@ -4,6 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * This file parse the an input file with graph operations
+ * into an hashmap of operation object. Each operation object represents
+ * an extension operation or a disjoint union operation.
+ *
+ * @Author Eric Andersson
+ *
+ *
+ */
+
 public class OperationParser {
     private final File operations;
     private final HashMap<String, Operation> operationHashMap = new HashMap<>();

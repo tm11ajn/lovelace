@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+/**
+ * Storage of the curren graph built by graph operations.
+ *
+ * @author Eric Andersson
+ */
+
 public class Graph {
     private HashMap<Integer, OpNode> unionPorts = new HashMap<>();
     private HashMap<Integer, OpNode> availablePorts = new HashMap<>();

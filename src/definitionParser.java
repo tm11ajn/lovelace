@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * Parse the definition file into definitions that are used to instantiate
+ * an semantic graph.
+ *
+ * @author Eric Andersson
+ */
+
 public class definitionParser {
     private final File definitions;
     private String variableString = "";

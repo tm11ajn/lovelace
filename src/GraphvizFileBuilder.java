@@ -2,6 +2,13 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
 
+/**
+ * Used to build the graphviz file which is able to visualize the
+ * an uninstantiated semantic graph or and instantiated semantic graph.
+ *
+ * @author Eric Andersson
+ */
+
 
 public class GraphvizFileBuilder {
     private final File theDir;

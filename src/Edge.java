@@ -1,3 +1,9 @@
+/**
+ * Same as EdgeInfo, unsure why I have to different implementations.
+ *
+ * @author Eric Andersson
+ */
+
 public class Edge {
     private OpNode fromNode;
     private OpNode toNode;

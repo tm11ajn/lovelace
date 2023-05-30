@@ -1,6 +1,13 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Operation represents an graph operation in
+ * graph extension grammar.
+ *
+ * @Author Eric Andersson
+ */
+
 public class Operation {
     private final String opName;
     private contextRule contextRule;

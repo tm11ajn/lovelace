@@ -1,6 +1,12 @@
 
 import java.io.File;
 
+/**
+ * Check if an input file is valid
+ *
+ * @author Eric Andersson
+ */
+
 public class inputCheck {
 
     public inputCheck(){

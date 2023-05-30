@@ -1,5 +1,12 @@
 import java.util.ArrayList;
 
+/**
+ * A node in a well-formed tree generated from an RTG.
+ *
+ * @author Anna Jonsson
+ * Modified by Eric Andersson to suite the implementation of Lovelace.
+ */
+
 public class TreeNode {
     private String label;
     private TreeNode parent = null;

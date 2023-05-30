@@ -1,11 +1,15 @@
 import java.util.ArrayList;
 
+/**
+ * Representation of a dock which includes dockNumber. Poorly written.
+ *
+ * @author Eric Andersson
+ */
+
 public class Dock {
     private int dockNum;
-    //private String[] args;
     private String arg = null;
     private ArrayList<String> args = new ArrayList<>();
-    private int i = 0;
 
 
     public Dock(String[] args){

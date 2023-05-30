@@ -1,5 +1,11 @@
 import java.util.ArrayList;
 
+/**
+ * UnionInfo includes information about the disjoint union operation in
+ * graph extension grammar.
+ *
+ * @Eric Andersson
+ */
 public class UnionInfo {
     private final int numberOfPorts;
     private final boolean isLeft;

@@ -1,3 +1,10 @@
+/**
+ * Class used to store information about edges. Information include: node with outgoing edge,
+ * the argument of the edge and the target node of the edge.
+ *
+ * @author Eric Andersson
+ */
+
 public class EdgeInfo {
     private final OpNode toNode;
     private final String arg;

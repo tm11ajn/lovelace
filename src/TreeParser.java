@@ -2,6 +2,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Stack;
 
+/**
+ * Used to recursively parse a textual representation of a tree
+ * into a tree object.
+ *
+ * @author Anna Jonsson
+ * Modified by Eric Andersson to suite the implementation of Lovelace.
+ */
+
 public class TreeParser {
 
     public static final String SPLIT_REGEX = "(->)|[^\\\\]#";

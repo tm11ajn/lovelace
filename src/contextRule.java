@@ -1,3 +1,9 @@
+/**
+ * Unused
+ *
+ * @author Eric Andersson
+ */
+
 public class contextRule {
     private final String name;
 

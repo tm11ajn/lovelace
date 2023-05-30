@@ -1,5 +1,12 @@
 import java.util.HashMap;
 
+/**
+ * A node in a graph operation based
+ * on graph extension grammar.
+ *
+ * @author Eric Andersson
+ */
+
 public class OpNode {
     private int portNum = -1;
     private HashMap<Integer, Dock> docks = new HashMap<>();

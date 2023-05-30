@@ -1,5 +1,12 @@
 import java.util.*;
 
+/**
+ * Generate a uninstantiated DAG by applying graph operations
+ * based on an derivation tree according to the graph extension
+ * grammar formalism.
+ *
+ * @Author Eric Andersson
+ */
 
 public class DAGGenerator {
 

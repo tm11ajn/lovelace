@@ -2,6 +2,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+/**
+ * Used to store contextual nodes. Is probably not very efficient.
+ *
+ * @author Eric Andersson
+ */
+
 
 public class ContextualNodeStorage {
     private HashMap<String, ArrayList<OpNode>> contextNodesHashmap;

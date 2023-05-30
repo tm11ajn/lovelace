@@ -1,0 +1,22 @@
+OPERATION: zc2 {
+    0[label="z", port=2]
+    1[label="undef", port=1]
+    2[label="y"]
+    3[dock=1]
+
+    0 -> 3 [label="arg0"]
+    0 -> 2 [label="arg1"]
+}
+
+OPERATION: zc1 {
+    0[label="z", port=2]
+    1[label="undef", port=1]
+    2[dock=1]
+
+    0 -> 2 [label="arg0"]
+    0 -> 2 [label="arg1"]
+}
+
+OPERATION: sx {
+    0[label="x", port=1]
+}
